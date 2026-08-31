@@ -5,18 +5,31 @@ const order = [
   "8447","8476","8474","8449","8463","8460","8450","8464","8478","8453"
 ];
 
-const fullWidthPositions = new Set([2, 5, 8, 17, 36, 37]);
-
 const grid = document.getElementById("portfolio");
 const viewer = document.getElementById("viewer");
 const viewerImage = document.getElementById("viewer-image");
 const close = document.getElementById("close");
 
-order.forEach((id, index) => {
-  const figure = document.createElement("figure");
+/*
+  Bilder werden automatisch in zwei Spalten verteilt.
+  Dadurch entstehen keine schwarzen Zwischenräume
+  durch unterschiedlich hohe Bilder.
+*/
 
-  figure.className =
-    "item" + (fullWidthPositions.has(index) ? " full" : "");
+const columns = [
+  document.createElement("div"),
+  document.createElement("div")
+];
+
+columns.forEach(column => {
+  column.className = "portfolio-column";
+  grid.appendChild(column);
+});
+
+order.forEach((id, index) => {
+
+  const figure = document.createElement("figure");
+  figure.className = "item";
 
   const img = document.createElement("img");
 
@@ -26,17 +39,41 @@ order.forEach((id, index) => {
   img.decoding = "async";
 
   figure.appendChild(img);
-  grid.appendChild(figure);
 
+  /*
+    Klick öffnet das Bild groß.
+  */
   figure.addEventListener("click", () => {
     viewerImage.src = img.src;
     viewerImage.alt = img.alt;
     viewer.showModal();
   });
+
+  /*
+    Das Bild kommt immer in die momentan
+    kürzere Spalte.
+  */
+  const columnHeights = columns.map(
+    column => column.getBoundingClientRect().height
+  );
+
+  const shortestColumn =
+    columnHeights[0] <= columnHeights[1] ? 0 : 1;
+
+  columns[shortestColumn].appendChild(figure);
 });
 
-close.addEventListener("click", () => viewer.close());
 
-viewer.addEventListener("click", e => {
-  if (e.target === viewer) viewer.close();
+/*
+  Viewer schließen
+*/
+
+close.addEventListener("click", () => {
+  viewer.close();
+});
+
+viewer.addEventListener("click", event => {
+  if (event.target === viewer) {
+    viewer.close();
+  }
 });
