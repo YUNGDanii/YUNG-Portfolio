@@ -5,7 +5,8 @@ const order = [
   "8447","8476","8474","8449","8463","8460","8450","8464","8478","8453"
 ];
 
-const fullWidthPositions = new Set([2, 5, 8, 17, 19, 36, 37]);
+const fullWidthPositions = new Set([2, 5, 8, 17, 36, 37]);
+
 const grid = document.getElementById("portfolio");
 const viewer = document.getElementById("viewer");
 const viewerImage = document.getElementById("viewer-image");
@@ -13,9 +14,12 @@ const close = document.getElementById("close");
 
 order.forEach((id, index) => {
   const figure = document.createElement("figure");
-  figure.className = "item" + (fullWidthPositions.has(index) ? " full" : "");
+
+  figure.className =
+    "item" + (fullWidthPositions.has(index) ? " full" : "");
 
   const img = document.createElement("img");
+
   img.src = `images/${id}.jpeg`;
   img.alt = `YUNG portfolio image ${index + 1}`;
   img.loading = index < 4 ? "eager" : "lazy";
@@ -32,6 +36,7 @@ order.forEach((id, index) => {
 });
 
 close.addEventListener("click", () => viewer.close());
+
 viewer.addEventListener("click", e => {
   if (e.target === viewer) viewer.close();
 });
