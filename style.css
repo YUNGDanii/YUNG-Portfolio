@@ -6,7 +6,6 @@
   box-sizing: border-box;
 }
 
-
 html,
 body {
   margin: 0;
@@ -21,7 +20,6 @@ body {
     Helvetica,
     sans-serif;
 }
-
 
 body {
   overflow-x: hidden;
@@ -54,6 +52,11 @@ body {
   height: 100%;
 
   object-fit: cover;
+
+  /*
+    MOBILE
+    Aktuelle Position des Headers / Logos
+  */
 
   object-position: 70% 30%;
 
@@ -158,19 +161,34 @@ body {
    PORTFOLIO
    ================================================== */
 
-.portfolio {
-  width: 100%;
+/*
+  KEIN NORMALES GRID.
 
-  margin: 0;
+  Das JavaScript erzeugt die tatsächlichen
+  Portfolio-Spalten und verteilt die Bilder
+  automatisch auf die jeweils kürzeste Spalte.
+
+  Dadurch entsteht der versetzte / Masonry-Look.
+*/
+
+.portfolio {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 3px;
 
   padding: 0 3px 3px;
+
+  align-items: start;
 
   background: #111;
 }
 
 
 /* ==================================================
-   MOBILE SPALTEN
+   PORTFOLIO SPALTEN
    ================================================== */
 
 .portfolio-column {
@@ -185,31 +203,13 @@ body {
 
 
 /* ==================================================
-   MOBILE GRID
-   ================================================== */
-
-@media (max-width: 699px) {
-
-  .portfolio {
-    display: grid;
-
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-
-    gap: 3px;
-
-    align-items: start;
-  }
-
-}
-
-
-/* ==================================================
    PORTFOLIO ITEM
    ================================================== */
 
 .item {
   display: block;
+
+  width: 100%;
 
   margin: 0;
 
@@ -230,53 +230,11 @@ body {
 
   width: 100%;
 
-  height: 100%;
+  height: auto;
 
   margin: 0;
 
   padding: 0;
-
-  object-fit: cover;
-}
-
-
-/* ==================================================
-   DESKTOP ROWS
-   ================================================== */
-
-.portfolio-row {
-  display: flex;
-
-  width: 100%;
-
-  gap: 5px;
-
-  margin: 0 0 5px;
-
-  align-items: stretch;
-
-  overflow: hidden;
-}
-
-
-.portfolio-row .item {
-  flex: 0 0 auto;
-
-  margin: 0;
-
-  padding: 0;
-
-  overflow: hidden;
-}
-
-
-.portfolio-row .item img {
-  width: 100%;
-  height: 100%;
-
-  display: block;
-
-  object-fit: cover;
 }
 
 
@@ -365,17 +323,29 @@ dialog img {
 
 @media (min-width: 700px) {
 
+  /* ================================================
+     HERO
+     ================================================ */
+
   .hero {
     height: 78vh;
   }
 
 
   .hero > img {
+    /*
+      Desktop Hero Position
+    */
+
     object-position: 62% center;
 
     transform: scale(1.25);
   }
 
+
+  /* ================================================
+     HERO INFORMATION
+     ================================================ */
 
   .hero-info {
     left: 28px;
@@ -397,6 +367,10 @@ dialog img {
   }
 
 
+  /* ================================================
+     SCROLL ARROW
+     ================================================ */
+
   .scroll-arrow {
     left: 28px;
 
@@ -406,10 +380,29 @@ dialog img {
   }
 
 
-  .portfolio {
-    padding: 0 5px 5px;
+  /* ================================================
+     DESKTOP PORTFOLIO
+     ================================================ */
 
-    display: block;
+  /*
+    Drei echte Spalten.
+
+    Das JavaScript erzeugt ebenfalls
+    drei .portfolio-column Elemente.
+  */
+
+  .portfolio {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+
+    gap: 5px;
+
+    padding: 0 5px 5px;
+  }
+
+
+  .portfolio-column {
+    gap: 5px;
   }
 
 }
