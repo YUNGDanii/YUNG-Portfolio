@@ -24,19 +24,26 @@ const order = [
 
 
 const grid = document.getElementById("portfolio");
+
 const viewer = document.getElementById("viewer");
-const viewerImage = document.getElementById("viewer-image");
-const close = document.getElementById("close");
+
+const viewerImage =
+  document.getElementById("viewer-image");
+
+const close =
+  document.getElementById("close");
 
 
 /* ==================================================
-   AKTUELLEN MODUS ERMITTELN
+   MODUS
    ================================================== */
 
 function getMode() {
+
   return window.innerWidth >= 700
     ? "desktop"
     : "mobile";
+
 }
 
 
@@ -62,7 +69,11 @@ function createColumns() {
   columns = [];
 
 
-  for (let i = 0; i < columnCount; i++) {
+  for (
+    let i = 0;
+    i < columnCount;
+    i++
+  ) {
 
     const column =
       document.createElement("div");
@@ -73,6 +84,7 @@ function createColumns() {
     grid.appendChild(column);
 
     columns.push(column);
+
   }
 
 }
@@ -87,34 +99,47 @@ const items = order.map((id, index) => {
   const figure =
     document.createElement("figure");
 
-  figure.className = "item";
+  figure.className =
+    "item";
 
 
   const img =
     document.createElement("img");
 
-  img.src = `images/${id}.jpeg`;
+  img.src =
+    `images/${id}.jpeg`;
 
   img.alt =
     `YUNG portfolio image ${index + 1}`;
 
-  img.loading = "eager";
+  img.loading =
+    "eager";
 
-  img.decoding = "async";
+  img.decoding =
+    "async";
 
 
   figure.appendChild(img);
 
 
-  figure.addEventListener("click", () => {
+  /* ==================================================
+     FULLSCREEN
+     ================================================== */
 
-    viewerImage.src = img.src;
+  figure.addEventListener(
+    "click",
+    () => {
 
-    viewerImage.alt = img.alt;
+      viewerImage.src =
+        img.src;
 
-    viewer.showModal();
+      viewerImage.alt =
+        img.alt;
 
-  });
+      viewer.showModal();
+
+    }
+  );
 
 
   return {
@@ -127,7 +152,7 @@ const items = order.map((id, index) => {
 
 
 /* ==================================================
-   BILD LADEN
+   AUF BILD WARTEN
    ================================================== */
 
 function waitForImage(img) {
@@ -142,6 +167,7 @@ function waitForImage(img) {
       resolve();
 
       return;
+
     }
 
 
@@ -180,15 +206,18 @@ async function buildPortfolio() {
 
 
   /*
-    Prüfen, ob während des Ladens
-    der Bildschirm gedreht wurde.
+    Falls während des Ladens
+    gedreht wurde.
   */
 
-  if (getMode() !== currentMode) {
+  if (
+    getMode() !== currentMode
+  ) {
 
-    currentMode = getMode();
+    currentMode =
+      getMode();
 
-    buildPortfolio();
+    await buildPortfolio();
 
     return;
 
@@ -222,7 +251,7 @@ async function buildPortfolio() {
 
 
   /* ==================================================
-     MASONRY VERTEILUNG
+     MASONRY
      ================================================== */
 
   items.forEach(item => {
@@ -288,12 +317,8 @@ buildPortfolio();
 
 
 /* ==================================================
-   ORIENTIERUNGSWECHSEL
+   DREHEN / RESPONSIVE WECHSEL
    ================================================== */
-
-let lastWidth =
-  window.innerWidth;
-
 
 window.addEventListener(
   "resize",
@@ -309,40 +334,39 @@ window.addEventListener(
     */
 
     if (
-      newMode !== currentMode
+      newMode === currentMode
     ) {
 
-      /*
-        Aktuelle Scrollposition sichern.
-      */
-
-      const scrollPosition =
-        window.scrollY;
-
-
-      currentMode =
-        newMode;
-
-
-      buildPortfolio().then(() => {
-
-        /*
-          Nach dem Neuaufbau wieder
-          an exakt dieselbe Stelle springen.
-        */
-
-        window.scrollTo(
-          0,
-          scrollPosition
-        );
-
-      });
+      return;
 
     }
 
 
-    lastWidth =
-      window.innerWidth;
+    /*
+      Scrollposition merken.
+    */
+
+    const scrollPosition =
+      window.scrollY;
+
+
+    currentMode =
+      newMode;
+
+
+    buildPortfolio().then(() => {
+
+      /*
+        Nach dem Wechsel wieder
+        an die gleiche Stelle.
+      */
+
+      window.scrollTo(
+        0,
+        scrollPosition
+      );
+
+    });
 
   }
 );
