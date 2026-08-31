@@ -15,6 +15,7 @@ body {
   overflow-x: hidden;
 }
 
+
 /* =========================
    HERO
    ========================= */
@@ -37,31 +38,74 @@ body {
   transform: scale(1.25) !important;
 }
 
+
 /* =========================
-   CREDIT
+   HERO INFO
    ========================= */
 
-.credit {
-  padding: 13px 14px 17px;
+.hero-info {
+  position: absolute;
+  left: 14px;
+  bottom: 85px;
+  z-index: 2;
+
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 12px;
-  font-size: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+
+  color: #fff;
+}
+
+.hero-title {
+  margin: 0 0 24px;
+
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1;
+
+  letter-spacing: -0.03em;
+}
+
+.hero-credit {
+  margin: 0 0 7px;
+
+  font-size: 11px;
+  font-weight: 400;
   line-height: 1.3;
-  letter-spacing: .02em;
-  background: #111;
+
+  letter-spacing: .01em;
 }
 
-.credit span {
-  opacity: .9;
-}
+.hero-link {
+  color: #fff;
 
-.credit a {
-  color: inherit;
+  font-size: 11px;
+  line-height: 1.3;
+
   text-decoration: none;
-  opacity: .55;
+  opacity: .7;
 }
+
+
+/* =========================
+   SCROLL ARROW
+   ========================= */
+
+.scroll-arrow {
+  position: absolute;
+  left: 14px;
+  bottom: 25px;
+  z-index: 2;
+
+  color: #fff;
+
+  font-size: 30px;
+  font-weight: 300;
+  line-height: 1;
+
+  pointer-events: none;
+}
+
 
 /* =========================
    PORTFOLIO
@@ -93,6 +137,7 @@ body {
   height: auto;
 }
 
+
 /* =========================
    FULLSCREEN VIEWER
    ========================= */
@@ -102,9 +147,12 @@ dialog {
   max-width: 100vw;
   height: 100vh;
   max-height: 100vh;
+
   margin: 0;
   padding: 0;
+
   border: 0;
+
   background: rgba(0, 0, 0, .96);
 }
 
@@ -118,20 +166,32 @@ dialog img {
   object-fit: contain;
 }
 
+
+/* =========================
+   CLOSE BUTTON
+   ========================= */
+
 #close {
   position: fixed;
   top: max(14px, env(safe-area-inset-top));
   right: 14px;
+
   z-index: 10;
+
   width: 38px;
   height: 38px;
+
   border: 0;
   border-radius: 50%;
+
   background: rgba(255, 255, 255, .14);
+
   color: #fff;
+
   font-size: 25px;
   line-height: 1;
 }
+
 
 /* =========================
    DESKTOP
@@ -146,6 +206,26 @@ dialog img {
   .hero img {
     transform: scale(1.25) !important;
     object-position: 62% center;
+  }
+
+  .hero-info {
+    left: 22px;
+    bottom: 105px;
+  }
+
+  .hero-title {
+    font-size: 36px;
+    margin-bottom: 30px;
+  }
+
+  .hero-credit,
+  .hero-link {
+    font-size: 13px;
+  }
+
+  .scroll-arrow {
+    left: 22px;
+    bottom: 35px;
   }
 
   .credit {
