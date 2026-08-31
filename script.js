@@ -34,9 +34,11 @@ const close = document.getElementById("close");
    ================================================== */
 
 const isDesktop = window.innerWidth >= 700;
+
 const columnCount = isDesktop ? 3 : 2;
 
 const columns = [];
+
 
 for (let i = 0; i < columnCount; i++) {
 
@@ -51,7 +53,7 @@ for (let i = 0; i < columnCount; i++) {
 
 
 /* ==================================================
-   BILDER
+   BILDER VORBEREITEN
    ================================================== */
 
 const items = order.map((id, index) => {
@@ -111,6 +113,7 @@ function waitForImage(img) {
       img.complete &&
       img.naturalWidth > 0
     ) {
+
       resolve();
 
       return;
@@ -171,6 +174,7 @@ async function buildPortfolio() {
       !item.img.naturalWidth ||
       !item.img.naturalHeight
     ) {
+
       return;
     }
 
@@ -197,7 +201,9 @@ async function buildPortfolio() {
         columnHeights[i] <
         columnHeights[shortest]
       ) {
+
         shortest = i;
+
       }
 
     }
