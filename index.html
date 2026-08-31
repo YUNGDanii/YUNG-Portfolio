@@ -2,27 +2,28 @@
 <html lang="de">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#111111">
   <title>YUNG — Portfolio</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="portfolio" aria-label="YUNG portfolio">
-    <header class="intro">
-      <div class="brand">YUNG</div>
-      <div class="meta">Portfolio / 2026</div>
-    </header>
-
-    <section class="grid" id="grid">
-      <!-- Landscape images span both columns; portrait images occupy one column,
-           reproducing the visual rhythm of the reference portfolio. -->
+  <main>
+    <section class="hero">
+      <img src="images/8471.jpeg" alt="YUNG portfolio — hero">
     </section>
+
+    <div class="credit">
+      <span>Photography — Selinna Akibas</span>
+      <a href="https://www.instagram.com/selinna.ph/" target="_blank" rel="noopener noreferrer">@selinna.ph</a>
+    </div>
+
+    <section class="portfolio-grid" id="portfolio"></section>
   </main>
 
-  <dialog id="viewer">
-    <button class="close" aria-label="Bild schließen">×</button>
-    <img id="viewerImage" alt="">
+  <dialog id="viewer" aria-label="Bildansicht">
+    <button id="close" aria-label="Schließen">×</button>
+    <img id="viewer-image" alt="">
   </dialog>
 
   <script src="script.js"></script>
