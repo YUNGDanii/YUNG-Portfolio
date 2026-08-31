@@ -36,9 +36,11 @@ body {
 
   object-fit: cover;
 
-  /* Hero-Bild */
-  transform: translateX(-30%) scale(1.25);
-  transform-origin: center center;
+  /* Position des Fotos */
+  object-position: 50% center;
+
+  /* leichter Zoom */
+  transform: scale(1.25);
 }
 
 
@@ -144,15 +146,18 @@ body {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 
   gap: 3px;
+
   padding: 0 3px 3px;
 }
 
 .item {
   display: block;
+
   margin: 0;
   padding: 0;
 
   overflow: hidden;
+
   background: #191919;
 
   cursor: zoom-in;
@@ -164,6 +169,7 @@ body {
 
 .item img {
   display: block;
+
   width: 100%;
   height: auto;
 }
@@ -195,6 +201,7 @@ dialog::backdrop {
 dialog img {
   width: 100%;
   height: 100%;
+
   object-fit: contain;
 }
 
@@ -239,8 +246,8 @@ dialog img {
   }
 
   .hero img {
-    transform: translateX(-18%) scale(1.25);
-    transform-origin: center center;
+    transform: scale(1.25);
+    object-position: 50% center;
   }
 
   .hero-info {
