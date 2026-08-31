@@ -1,7 +1,3 @@
-/* ==================================================
-   BILDREIHENFOLGE
-   ================================================== */
-
 const order = [
   "8455","8467",
   "8442",
@@ -27,88 +23,101 @@ const order = [
   "8453"
 ];
 
-
-/* ==================================================
-   ELEMENTE
-   ================================================== */
-
 const grid = document.getElementById("portfolio");
-
 const viewer = document.getElementById("viewer");
 const viewerImage = document.getElementById("viewer-image");
 const close = document.getElementById("close");
 
 
 /* ==================================================
-   RESPONSIVE SPALTEN
+   ZWEI SPALTEN
    ================================================== */
 
-function getColumnCount() {
+const columns = [
+  document.createElement("div"),
+  document.createElement("div")
+];
 
-  /*
-    Mobile:
-    2 Spalten
-
-    Desktop:
-    3 Spalten
-  */
-
-  return window.innerWidth >= 700 ? 3 : 2;
-}
-
-
-/* ==================================================
-   BILDER ERSTELLEN
-   ================================================== */
-
-const items = order.map((id, index) => {
-
-  const figure = document.createElement("figure");
-
-  figure.className = "item";
-
-
-  const img = document.createElement("img");
-
-  img.src = `images/${id}.jpeg`;
-
-  img.alt = `YUNG portfolio image ${index + 1}`;
-
-  img.loading = "eager";
-
-  img.decoding = "async";
-
-
-  figure.appendChild(img);
-
-
-  /* =========================
-     FULLSCREEN
-     ========================= */
-
-  figure.addEventListener("click", () => {
-
-    viewerImage.src = img.src;
-
-    viewerImage.alt = img.alt;
-
-    viewer.showModal();
-
-  });
-
-
-  return {
-    id,
-    figure,
-    img,
-    index
-  };
-
+columns.forEach(column => {
+  column.className = "portfolio-column";
+  grid.appendChild(column);
 });
 
 
 /* ==================================================
-   AUF BILDER WARTEN
+   DESKTOP ERKENNEN
+   ================================================== */
+
+const isDesktop = window.matchMedia("(min-width: 700px)").matches;
+
+
+/* ==================================================
+   BILDER VORBEREITEN
+   ================================================== */
+
+const items = order
+  .filter(id => {
+
+    /*
+      8453 soll nur auf Desktop
+      nicht angezeigt werden.
+    */
+
+    if (isDesktop && id === "8453") {
+      return false;
+    }
+
+    return true;
+  })
+  .map((id, index) => {
+
+    const figure = document.createElement("figure");
+    figure.className = "item";
+
+    const img = document.createElement("img");
+
+    img.src = `images/${id}.jpeg`;
+
+    img.alt = `YUNG portfolio image ${index + 1}`;
+
+    /*
+      Alle Bilder sofort laden.
+      Dadurch wird die Masonry-Anordnung
+      beim ersten Seitenaufruf korrekt aufgebaut.
+    */
+    img.loading = "eager";
+
+    img.decoding = "async";
+
+    figure.appendChild(img);
+
+
+    /* ==============================================
+       BILD ÖFFNEN
+       ============================================== */
+
+    figure.addEventListener("click", () => {
+
+      viewerImage.src = img.src;
+
+      viewerImage.alt = img.alt;
+
+      viewer.showModal();
+
+    });
+
+
+    return {
+      id,
+      figure,
+      img
+    };
+
+  });
+
+
+/* ==================================================
+   AUF ALLE BILDER WARTEN
    ================================================== */
 
 const imagePromises = items.map(item => {
@@ -116,9 +125,8 @@ const imagePromises = items.map(item => {
   return new Promise(resolve => {
 
     /*
-      Bild ist bereits vollständig geladen.
+      Bild ist bereits geladen
     */
-
     if (
       item.img.complete &&
       item.img.naturalWidth > 0
@@ -129,9 +137,8 @@ const imagePromises = items.map(item => {
 
 
     /*
-      Normaler Load.
+      Bild wird noch geladen
     */
-
     item.img.addEventListener(
       "load",
       () => resolve(item),
@@ -140,11 +147,9 @@ const imagePromises = items.map(item => {
 
 
     /*
-      Auch bei einem Fehler weiterbauen,
-      damit nicht das komplette Portfolio
-      hängen bleibt.
+      Falls ein Bild fehlt,
+      trotzdem weitermachen.
     */
-
     item.img.addEventListener(
       "error",
       () => resolve(item),
@@ -160,57 +165,25 @@ const imagePromises = items.map(item => {
    MASONRY AUFBAU
    ================================================== */
 
-function buildMasonry(loadedItems) {
+Promise.all(imagePromises).then(loadedItems => {
 
   /*
-    Aktuelle Anzahl Spalten bestimmen.
+    Sicherheit:
+    Spalten vor dem Aufbau leeren.
   */
 
-  const columnCount = getColumnCount();
+  columns.forEach(column => {
+    column.innerHTML = "";
+  });
+
+
+  const columnHeights = [0, 0];
+
+  const gridWidth = grid.clientWidth;
 
 
   /*
-    Alten Aufbau komplett entfernen.
-    Dadurch entstehen beim Wechsel
-    zwischen Mobile/Desktop keine
-    doppelten Bilder.
-  */
-
-  grid.innerHTML = "";
-
-
-  /*
-    Neue Spalten erzeugen.
-  */
-
-  const columns = [];
-
-  for (let i = 0; i < columnCount; i++) {
-
-    const column = document.createElement("div");
-
-    column.className = "portfolio-column";
-
-    columns.push(column);
-
-    grid.appendChild(column);
-
-  }
-
-
-  /*
-    Höhe jeder Spalte merken.
-  */
-
-  const columnHeights =
-    new Array(columnCount).fill(0);
-
-
-  /*
-    Abstände aus CSS.
-
-    Mobile = 3px
-    Desktop = 5px
+    Abstand zwischen den beiden Spalten.
   */
 
   const gap =
@@ -219,47 +192,15 @@ function buildMasonry(loadedItems) {
       : 3;
 
 
-  /*
-    Tatsächliche Breite des Portfolios.
-  */
-
-  const gridWidth = grid.clientWidth;
-
-
-  /*
-    Gesamtbreite der Zwischenräume.
-  */
-
-  const totalGaps =
-    gap * (columnCount - 1);
-
-
-  /*
-    Breite eines einzelnen Bildes.
-  */
-
   const columnWidth =
-    (gridWidth - totalGaps) / columnCount;
+    (gridWidth - gap) / 2;
 
 
-  /* ==================================================
-     BILDER VERTEILEN
-     ================================================== */
-
-  loadedItems
-  .filter(item => {
-    // 8453 nur auf Desktop entfernen
-    if (window.innerWidth >= 700 && item.id === "8453") {
-      return false;
-    }
-
-    return true;
-  })
-  .forEach(item => {
+  loadedItems.forEach(item => {
 
     /*
-      Falls ein Bild nicht geladen werden konnte,
-      überspringen wir die Höhenberechnung.
+      Falls das Bild nicht geladen werden konnte,
+      überspringen.
     */
 
     if (
@@ -271,7 +212,8 @@ function buildMasonry(loadedItems) {
 
 
     /*
-      Seitenverhältnis des Originalbildes.
+      Original-Seitenverhältnis
+      des Bildes bestimmen.
     */
 
     const ratio =
@@ -280,7 +222,7 @@ function buildMasonry(loadedItems) {
 
 
     /*
-      Tatsächliche Höhe in der jeweiligen Spalte.
+      Tatsächliche Höhe in der Spalte.
     */
 
     const height =
@@ -288,25 +230,18 @@ function buildMasonry(loadedItems) {
 
 
     /*
-      Kürzeste Spalte suchen.
+      Immer die aktuell kürzere
+      Spalte auswählen.
     */
 
-    let shortest = 0;
-
-    for (let i = 1; i < columnCount; i++) {
-
-      if (
-        columnHeights[i] <
-        columnHeights[shortest]
-      ) {
-        shortest = i;
-      }
-
-    }
+    const shortest =
+      columnHeights[0] <= columnHeights[1]
+        ? 0
+        : 1;
 
 
     /*
-      Bild in die kürzeste Spalte setzen.
+      Bild in die kürzere Spalte setzen.
     */
 
     columns[shortest].appendChild(
@@ -315,7 +250,8 @@ function buildMasonry(loadedItems) {
 
 
     /*
-      Höhe inklusive Abstand merken.
+      Höhe inklusive Spaltenabstand
+      aktualisieren.
     */
 
     columnHeights[shortest] +=
@@ -323,66 +259,39 @@ function buildMasonry(loadedItems) {
 
   });
 
-}
-
-
-/* ==================================================
-   INITIALER AUFBAU
-   ================================================== */
-
-Promise.all(imagePromises).then(loadedItems => {
-
-  buildMasonry(loadedItems);
-
 });
 
 
 /* ==================================================
-   RESIZE
-   ==================================================
-
-   Wenn man beispielsweise das Browserfenster
-   von Desktop auf Mobile zieht oder umgekehrt,
-   wird das Masonry neu berechnet.
-*/
-
-let resizeTimer = null;
-
-window.addEventListener("resize", () => {
-
-  clearTimeout(resizeTimer);
-
-  resizeTimer = setTimeout(() => {
-
-    /*
-      Nur neu aufbauen, wenn die Bilder
-      bereits geladen sind.
-    */
-
-    buildMasonry(items);
-
-  }, 150);
-
-});
-
-
-/* ==================================================
-   FULLSCREEN VIEWER
+   FULLSCREEN VIEWER — SCHLIESSEN
    ================================================== */
 
 close.addEventListener("click", () => {
-
   viewer.close();
-
 });
 
+
+/* ==================================================
+   FULLSCREEN VIEWER — HINTERGRUND KLICK
+   ================================================== */
 
 viewer.addEventListener("click", event => {
 
   if (event.target === viewer) {
-
     viewer.close();
+  }
 
+});
+
+
+/* ==================================================
+   ESC-TASTE
+   ================================================== */
+
+document.addEventListener("keydown", event => {
+
+  if (event.key === "Escape" && viewer.open) {
+    viewer.close();
   }
 
 });
