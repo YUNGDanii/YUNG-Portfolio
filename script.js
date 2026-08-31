@@ -1,3 +1,7 @@
+/* ==================================================
+   BILDREIHENFOLGE
+   ================================================== */
+
 const order = [
   "8455","8467",
   "8442",
@@ -23,9 +27,15 @@ const order = [
 ];
 
 
-const grid = document.getElementById("portfolio");
+/* ==================================================
+   ELEMENTE
+   ================================================== */
 
-const viewer = document.getElementById("viewer");
+const grid =
+  document.getElementById("portfolio");
+
+const viewer =
+  document.getElementById("viewer");
 
 const viewerImage =
   document.getElementById("viewer-image");
@@ -35,19 +45,41 @@ const close =
 
 
 /* ==================================================
-   MODUS
-   ================================================== */
+   DESKTOP / MOBILE ERKENNEN
+   ==================================================
 
-function getMode() {
+   Desktop:
+   - normaler großer Bildschirm
+   - ODER Handy im Querformat
 
-  return window.innerWidth >= 700
-    ? "desktop"
-    : "mobile";
+   Mobile:
+   - Handy im Hochformat
 
+   Dadurch funktioniert das Drehen
+   unabhängig von einer 700px-Grenze.
+*/
+
+function isDesktopMode() {
+
+  const landscape =
+    window.innerWidth > window.innerHeight;
+
+  const wideScreen =
+    window.innerWidth >= 700;
+
+  return landscape || wideScreen;
 }
 
 
-let currentMode = getMode();
+/* ==================================================
+   AKTUELLER MODUS
+   ================================================== */
+
+let currentMode =
+  isDesktopMode()
+    ? "desktop"
+    : "mobile";
+
 
 let columns = [];
 
@@ -59,7 +91,7 @@ let columns = [];
 function createColumns() {
 
   const columnCount =
-    currentMode === "desktop"
+    isDesktopMode()
       ? 3
       : 2;
 
@@ -84,9 +116,7 @@ function createColumns() {
     grid.appendChild(column);
 
     columns.push(column);
-
   }
-
 }
 
 
@@ -94,61 +124,62 @@ function createColumns() {
    BILDER ERSTELLEN
    ================================================== */
 
-const items = order.map((id, index) => {
+const items =
+  order.map((id, index) => {
 
-  const figure =
-    document.createElement("figure");
+    const figure =
+      document.createElement("figure");
 
-  figure.className =
-    "item";
-
-
-  const img =
-    document.createElement("img");
-
-  img.src =
-    `images/${id}.jpeg`;
-
-  img.alt =
-    `YUNG portfolio image ${index + 1}`;
-
-  img.loading =
-    "eager";
-
-  img.decoding =
-    "async";
+    figure.className =
+      "item";
 
 
-  figure.appendChild(img);
+    const img =
+      document.createElement("img");
 
 
-  /* ==================================================
-     FULLSCREEN
-     ================================================== */
-
-  figure.addEventListener(
-    "click",
-    () => {
-
-      viewerImage.src =
-        img.src;
-
-      viewerImage.alt =
-        img.alt;
-
-      viewer.showModal();
-
-    }
-  );
+    img.src =
+      `images/${id}.jpeg`;
 
 
-  return {
-    id,
-    figure,
-    img
-  };
+    img.alt =
+      `YUNG portfolio image ${index + 1}`;
 
-});
+
+    img.loading =
+      "eager";
+
+
+    img.decoding =
+      "async";
+
+
+    figure.appendChild(img);
+
+
+    figure.addEventListener(
+      "click",
+      () => {
+
+        viewerImage.src =
+          img.src;
+
+        viewerImage.alt =
+          img.alt;
+
+        viewer.showModal();
+
+      }
+    );
+
+
+    return {
+      id,
+      figure,
+      img
+    };
+
+  });
 
 
 /* ==================================================
@@ -167,7 +198,6 @@ function waitForImage(img) {
       resolve();
 
       return;
-
     }
 
 
@@ -185,12 +215,11 @@ function waitForImage(img) {
     );
 
   });
-
 }
 
 
 /* ==================================================
-   PORTFOLIO AUFBAUEN
+   MASONRY AUFBAUEN
    ================================================== */
 
 async function buildPortfolio() {
@@ -206,21 +235,26 @@ async function buildPortfolio() {
 
 
   /*
-    Falls während des Ladens
-    gedreht wurde.
+    Prüfen, ob sich während des
+    Ladens die Ausrichtung geändert hat.
   */
 
+  const actualMode =
+    isDesktopMode()
+      ? "desktop"
+      : "mobile";
+
+
   if (
-    getMode() !== currentMode
+    actualMode !== currentMode
   ) {
 
     currentMode =
-      getMode();
+      actualMode;
 
     await buildPortfolio();
 
     return;
-
   }
 
 
@@ -251,7 +285,7 @@ async function buildPortfolio() {
 
 
   /* ==================================================
-     MASONRY
+     BILDER VERTEILEN
      ================================================== */
 
   items.forEach(item => {
@@ -260,9 +294,7 @@ async function buildPortfolio() {
       !item.img.naturalWidth ||
       !item.img.naturalHeight
     ) {
-
       return;
-
     }
 
 
@@ -275,7 +307,8 @@ async function buildPortfolio() {
       columnWidth * ratio;
 
 
-    let shortest = 0;
+    let shortest =
+      0;
 
 
     for (
@@ -317,58 +350,77 @@ buildPortfolio();
 
 
 /* ==================================================
-   DREHEN / RESPONSIVE WECHSEL
+   ORIENTIERUNG / RESIZE
    ================================================== */
+
+let resizeTimer = null;
+
+
+function handleResize() {
+
+  clearTimeout(resizeTimer);
+
+
+  resizeTimer =
+    setTimeout(() => {
+
+      const newMode =
+        isDesktopMode()
+          ? "desktop"
+          : "mobile";
+
+
+      /*
+        Nur neu aufbauen,
+        wenn wirklich zwischen
+        Mobile und Desktop gewechselt wurde.
+      */
+
+      if (
+        newMode === currentMode
+      ) {
+
+        return;
+      }
+
+
+      const scrollPosition =
+        window.scrollY;
+
+
+      currentMode =
+        newMode;
+
+
+      buildPortfolio().then(() => {
+
+        /*
+          Scrollposition nach dem
+          Wechsel wiederherstellen.
+        */
+
+        window.scrollTo({
+          top: scrollPosition,
+          left: 0,
+          behavior: "instant"
+        });
+
+      });
+
+    }, 100);
+
+}
+
 
 window.addEventListener(
   "resize",
-  () => {
-
-    const newMode =
-      getMode();
+  handleResize
+);
 
 
-    /*
-      Nur reagieren, wenn wirklich
-      Mobile <-> Desktop gewechselt wurde.
-    */
-
-    if (
-      newMode === currentMode
-    ) {
-
-      return;
-
-    }
-
-
-    /*
-      Scrollposition merken.
-    */
-
-    const scrollPosition =
-      window.scrollY;
-
-
-    currentMode =
-      newMode;
-
-
-    buildPortfolio().then(() => {
-
-      /*
-        Nach dem Wechsel wieder
-        an die gleiche Stelle.
-      */
-
-      window.scrollTo(
-        0,
-        scrollPosition
-      );
-
-    });
-
-  }
+window.addEventListener(
+  "orientationchange",
+  handleResize
 );
 
 
