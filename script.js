@@ -30,44 +30,73 @@ const close = document.getElementById("close");
 
 
 /* ==================================================
-   SPALTEN
+   AKTUELLEN MODUS ERMITTELN
    ================================================== */
 
-const isDesktop = window.innerWidth >= 700;
+function getMode() {
+  return window.innerWidth >= 700
+    ? "desktop"
+    : "mobile";
+}
 
-const columnCount = isDesktop ? 3 : 2;
 
-const columns = [];
+let currentMode = getMode();
+
+let columns = [];
 
 
-for (let i = 0; i < columnCount; i++) {
+/* ==================================================
+   SPALTEN ERSTELLEN
+   ================================================== */
 
-  const column = document.createElement("div");
+function createColumns() {
 
-  column.className = "portfolio-column";
+  const columnCount =
+    currentMode === "desktop"
+      ? 3
+      : 2;
 
-  grid.appendChild(column);
 
-  columns.push(column);
+  grid.innerHTML = "";
+
+  columns = [];
+
+
+  for (let i = 0; i < columnCount; i++) {
+
+    const column =
+      document.createElement("div");
+
+    column.className =
+      "portfolio-column";
+
+    grid.appendChild(column);
+
+    columns.push(column);
+  }
+
 }
 
 
 /* ==================================================
-   BILDER VORBEREITEN
+   BILDER ERSTELLEN
    ================================================== */
 
 const items = order.map((id, index) => {
 
-  const figure = document.createElement("figure");
+  const figure =
+    document.createElement("figure");
 
   figure.className = "item";
 
 
-  const img = document.createElement("img");
+  const img =
+    document.createElement("img");
 
   img.src = `images/${id}.jpeg`;
 
-  img.alt = `YUNG portfolio image ${index + 1}`;
+  img.alt =
+    `YUNG portfolio image ${index + 1}`;
 
   img.loading = "eager";
 
@@ -76,10 +105,6 @@ const items = order.map((id, index) => {
 
   figure.appendChild(img);
 
-
-  /* ==================================================
-     FULLSCREEN
-     ================================================== */
 
   figure.addEventListener("click", () => {
 
@@ -102,7 +127,7 @@ const items = order.map((id, index) => {
 
 
 /* ==================================================
-   AUF BILDER WARTEN
+   BILD LADEN
    ================================================== */
 
 function waitForImage(img) {
@@ -139,10 +164,13 @@ function waitForImage(img) {
 
 
 /* ==================================================
-   MASONRY
+   PORTFOLIO AUFBAUEN
    ================================================== */
 
 async function buildPortfolio() {
+
+  createColumns();
+
 
   await Promise.all(
     items.map(item =>
@@ -151,12 +179,30 @@ async function buildPortfolio() {
   );
 
 
-  const columnHeights =
-    new Array(columnCount).fill(0);
+  /*
+    Prüfen, ob während des Ladens
+    der Bildschirm gedreht wurde.
+  */
+
+  if (getMode() !== currentMode) {
+
+    currentMode = getMode();
+
+    buildPortfolio();
+
+    return;
+
+  }
+
+
+  const columnCount =
+    columns.length;
 
 
   const gap =
-    isDesktop ? 5 : 3;
+    currentMode === "desktop"
+      ? 5
+      : 3;
 
 
   const totalGap =
@@ -164,9 +210,20 @@ async function buildPortfolio() {
 
 
   const columnWidth =
-    (grid.clientWidth - totalGap) /
-    columnCount;
+    (
+      grid.clientWidth -
+      totalGap
+    ) / columnCount;
 
+
+  const columnHeights =
+    new Array(columnCount)
+      .fill(0);
+
+
+  /* ==================================================
+     MASONRY VERTEILUNG
+     ================================================== */
 
   items.forEach(item => {
 
@@ -176,6 +233,7 @@ async function buildPortfolio() {
     ) {
 
       return;
+
     }
 
 
@@ -223,29 +281,98 @@ async function buildPortfolio() {
 
 
 /* ==================================================
-   START
+   INITIALER AUFBAU
    ================================================== */
 
 buildPortfolio();
 
 
 /* ==================================================
-   FULLSCREEN
+   ORIENTIERUNGSWECHSEL
    ================================================== */
 
-close.addEventListener("click", () => {
-
-  viewer.close();
-
-});
+let lastWidth =
+  window.innerWidth;
 
 
-viewer.addEventListener("click", event => {
+window.addEventListener(
+  "resize",
+  () => {
 
-  if (event.target === viewer) {
+    const newMode =
+      getMode();
+
+
+    /*
+      Nur reagieren, wenn wirklich
+      Mobile <-> Desktop gewechselt wurde.
+    */
+
+    if (
+      newMode !== currentMode
+    ) {
+
+      /*
+        Aktuelle Scrollposition sichern.
+      */
+
+      const scrollPosition =
+        window.scrollY;
+
+
+      currentMode =
+        newMode;
+
+
+      buildPortfolio().then(() => {
+
+        /*
+          Nach dem Neuaufbau wieder
+          an exakt dieselbe Stelle springen.
+        */
+
+        window.scrollTo(
+          0,
+          scrollPosition
+        );
+
+      });
+
+    }
+
+
+    lastWidth =
+      window.innerWidth;
+
+  }
+);
+
+
+/* ==================================================
+   FULLSCREEN SCHLIESSEN
+   ================================================== */
+
+close.addEventListener(
+  "click",
+  () => {
 
     viewer.close();
 
   }
+);
 
-});
+
+viewer.addEventListener(
+  "click",
+  event => {
+
+    if (
+      event.target === viewer
+    ) {
+
+      viewer.close();
+
+    }
+
+  }
+);
