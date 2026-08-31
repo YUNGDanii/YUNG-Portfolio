@@ -1,3 +1,7 @@
+/* ==================================================
+   YUNG PORTFOLIO
+   ================================================== */
+
 const order = [
   "8455","8467",
   "8442",
@@ -19,220 +23,141 @@ const order = [
   "8449","8463",
   "8460","8450",
   "8464",
-  "8478",
-  "8453"
+  "8478"
+  /* 8453 absichtlich entfernt */
 ];
 
 const grid = document.getElementById("portfolio");
+
 const viewer = document.getElementById("viewer");
 const viewerImage = document.getElementById("viewer-image");
 const close = document.getElementById("close");
 
 
 /* ==================================================
-   ZWEI SPALTEN
+   BILDER ERSTELLEN
    ================================================== */
 
-const columns = [
-  document.createElement("div"),
-  document.createElement("div")
-];
+const items = order.map((id, index) => {
 
-columns.forEach(column => {
-  column.className = "portfolio-column";
-  grid.appendChild(column);
-});
+  const figure = document.createElement("figure");
+  figure.className = "item";
 
+  const img = document.createElement("img");
 
-/* ==================================================
-   DESKTOP ERKENNEN
-   ================================================== */
+  img.src = `images/${id}.jpeg`;
+  img.alt = `YUNG portfolio image ${index + 1}`;
 
-const isDesktop = window.matchMedia("(min-width: 700px)").matches;
+  /*
+    Alle Bilder sofort laden.
+    Das verhindert, dass das Layout beim
+    ersten Öffnen falsch aufgebaut wird.
+  */
+  img.loading = "eager";
+  img.decoding = "async";
 
+  figure.appendChild(img);
 
-/* ==================================================
-   BILDER VORBEREITEN
-   ================================================== */
-
-const items = order
-  .filter(id => {
-
-    /*
-      8453 soll nur auf Desktop
-      nicht angezeigt werden.
-    */
-
-    if (isDesktop && id === "8453") {
-      return false;
-    }
-
-    return true;
-  })
-  .map((id, index) => {
-
-    const figure = document.createElement("figure");
-    figure.className = "item";
-
-    const img = document.createElement("img");
-
-    img.src = `images/${id}.jpeg`;
-
-    img.alt = `YUNG portfolio image ${index + 1}`;
-
-    /*
-      Alle Bilder sofort laden.
-      Dadurch wird die Masonry-Anordnung
-      beim ersten Seitenaufruf korrekt aufgebaut.
-    */
-    img.loading = "eager";
-
-    img.decoding = "async";
-
-    figure.appendChild(img);
-
-
-    /* ==============================================
-       BILD ÖFFNEN
-       ============================================== */
-
-    figure.addEventListener("click", () => {
-
-      viewerImage.src = img.src;
-
-      viewerImage.alt = img.alt;
-
-      viewer.showModal();
-
-    });
-
-
-    return {
-      id,
-      figure,
-      img
-    };
-
+  figure.addEventListener("click", () => {
+    viewerImage.src = img.src;
+    viewerImage.alt = img.alt;
+    viewer.showModal();
   });
+
+  return {
+    id,
+    figure,
+    img
+  };
+});
 
 
 /* ==================================================
    AUF ALLE BILDER WARTEN
    ================================================== */
 
-const imagePromises = items.map(item => {
+function waitForImages() {
 
-  return new Promise(resolve => {
+  return Promise.all(
 
-    /*
-      Bild ist bereits geladen
-    */
-    if (
-      item.img.complete &&
-      item.img.naturalWidth > 0
-    ) {
-      resolve(item);
-      return;
-    }
+    items.map(item => {
 
+      if (
+        item.img.complete &&
+        item.img.naturalWidth > 0
+      ) {
+        return Promise.resolve(item);
+      }
 
-    /*
-      Bild wird noch geladen
-    */
-    item.img.addEventListener(
-      "load",
-      () => resolve(item),
-      { once: true }
-    );
+      return new Promise(resolve => {
 
+        item.img.addEventListener(
+          "load",
+          () => resolve(item),
+          { once: true }
+        );
 
-    /*
-      Falls ein Bild fehlt,
-      trotzdem weitermachen.
-    */
-    item.img.addEventListener(
-      "error",
-      () => resolve(item),
-      { once: true }
-    );
+        item.img.addEventListener(
+          "error",
+          () => resolve(item),
+          { once: true }
+        );
 
-  });
+      });
 
-});
+    })
+
+  );
+
+}
 
 
 /* ==================================================
-   MASONRY AUFBAU
+   MOBILE
    ================================================== */
 
-Promise.all(imagePromises).then(loadedItems => {
+/*
+  Mobile bleibt dein bisheriger Look:
 
-  /*
-    Sicherheit:
-    Spalten vor dem Aufbau leeren.
-  */
+  Zwei echte Spalten.
+  Das nächste Bild kommt immer
+  in die aktuell kürzere Spalte.
+*/
+
+function buildMobile() {
+
+  grid.innerHTML = "";
+
+  const columns = [
+    document.createElement("div"),
+    document.createElement("div")
+  ];
 
   columns.forEach(column => {
-    column.innerHTML = "";
+    column.className = "portfolio-column";
+    grid.appendChild(column);
   });
 
 
   const columnHeights = [0, 0];
 
+  const gap = 3;
+
   const gridWidth = grid.clientWidth;
-
-
-  /*
-    Abstand zwischen den beiden Spalten.
-  */
-
-  const gap =
-    window.innerWidth >= 700
-      ? 5
-      : 3;
-
 
   const columnWidth =
     (gridWidth - gap) / 2;
 
 
-  loadedItems.forEach(item => {
-
-    /*
-      Falls das Bild nicht geladen werden konnte,
-      überspringen.
-    */
-
-    if (
-      !item.img.naturalWidth ||
-      !item.img.naturalHeight
-    ) {
-      return;
-    }
-
-
-    /*
-      Original-Seitenverhältnis
-      des Bildes bestimmen.
-    */
+  items.forEach(item => {
 
     const ratio =
       item.img.naturalHeight /
       item.img.naturalWidth;
 
-
-    /*
-      Tatsächliche Höhe in der Spalte.
-    */
-
     const height =
       columnWidth * ratio;
 
-
-    /*
-      Immer die aktuell kürzere
-      Spalte auswählen.
-    */
 
     const shortest =
       columnHeights[0] <= columnHeights[1]
@@ -240,58 +165,294 @@ Promise.all(imagePromises).then(loadedItems => {
         : 1;
 
 
-    /*
-      Bild in die kürzere Spalte setzen.
-    */
-
     columns[shortest].appendChild(
       item.figure
     );
 
-
-    /*
-      Höhe inklusive Spaltenabstand
-      aktualisieren.
-    */
 
     columnHeights[shortest] +=
       height + gap;
 
   });
 
-});
+}
 
 
 /* ==================================================
-   FULLSCREEN VIEWER — SCHLIESSEN
+   DESKTOP
    ================================================== */
 
-close.addEventListener("click", () => {
-  viewer.close();
-});
+/*
+  Desktop bekommt KEIN normales Grid.
+
+  Stattdessen werden die Bilder zu Reihen
+  zusammengebaut.
+
+  Dadurch können Bilder innerhalb einer Reihe
+  unterschiedlich breit sein – genau wie bei
+  einer hochwertigen Portfolio-Galerie.
+*/
+
+function buildDesktop() {
+
+  grid.innerHTML = "";
+
+  const availableWidth =
+    grid.clientWidth;
+
+  const gap = 5;
+
+  /*
+    Zielhöhe der Reihen.
+
+    Je größer das Fenster,
+    desto größer dürfen die Bilder werden.
+  */
+
+  const targetHeight =
+    Math.max(
+      280,
+      Math.min(
+        430,
+        availableWidth * 0.25
+      )
+    );
 
 
-/* ==================================================
-   FULLSCREEN VIEWER — HINTERGRUND KLICK
-   ================================================== */
+  let row = [];
+  let aspectSum = 0;
 
-viewer.addEventListener("click", event => {
 
-  if (event.target === viewer) {
-    viewer.close();
+  function finishRow(isLastRow = false) {
+
+    if (!row.length) return;
+
+
+    const rowElement =
+      document.createElement("div");
+
+    rowElement.className =
+      "portfolio-row";
+
+
+    /*
+      Breite, die für Bilder verfügbar ist.
+    */
+
+    const totalGap =
+      gap * (row.length - 1);
+
+    const imageWidth =
+      availableWidth - totalGap;
+
+
+    /*
+      Bei einer normalen Reihe:
+      Bilder werden so skaliert,
+      dass sie exakt die Reihe füllen.
+    */
+
+    let rowHeight =
+      imageWidth / aspectSum;
+
+
+    /*
+      Die letzte Reihe soll nicht
+      überproportional riesig werden.
+    */
+
+    if (isLastRow) {
+
+      rowHeight =
+        Math.min(
+          rowHeight,
+          targetHeight
+        );
+
+    }
+
+
+    row.forEach(item => {
+
+      const ratio =
+        item.img.naturalWidth /
+        item.img.naturalHeight;
+
+      const width =
+        rowHeight * ratio;
+
+
+      item.figure.style.width =
+        `${width}px`;
+
+      item.figure.style.height =
+        `${rowHeight}px`;
+
+
+      rowElement.appendChild(
+        item.figure
+      );
+
+    });
+
+
+    grid.appendChild(
+      rowElement
+    );
+
+
+    row = [];
+    aspectSum = 0;
+
   }
 
+
+  /*
+    Bilder in Reihen sammeln.
+  */
+
+  items.forEach(item => {
+
+    const ratio =
+      item.img.naturalWidth /
+      item.img.naturalHeight;
+
+
+    row.push(item);
+
+    aspectSum += ratio;
+
+
+    const estimatedHeight =
+      imageWidthEstimate(
+        availableWidth,
+        aspectSum,
+        row.length,
+        gap
+      );
+
+
+    /*
+      Sobald die Reihe ungefähr
+      die gewünschte Höhe erreicht,
+      wird sie abgeschlossen.
+    */
+
+    if (
+      estimatedHeight <= targetHeight ||
+      row.length >= 4
+    ) {
+
+      finishRow(false);
+
+    }
+
+  });
+
+
+  /*
+    Restliche Bilder.
+  */
+
+  if (row.length) {
+    finishRow(true);
+  }
+
+
+  function imageWidthEstimate(
+    width,
+    aspectRatioSum,
+    count,
+    gapSize
+  ) {
+
+    const gaps =
+      gapSize * (count - 1);
+
+    return (
+      width - gaps
+    ) / aspectRatioSum;
+
+  }
+
+}
+
+
+/* ==================================================
+   LAYOUT AUSWÄHLEN
+   ================================================== */
+
+function buildPortfolio() {
+
+  if (
+    window.matchMedia(
+      "(min-width: 700px)"
+    ).matches
+  ) {
+
+    buildDesktop();
+
+  } else {
+
+    buildMobile();
+
+  }
+
+}
+
+
+/* ==================================================
+   INITIALISIERUNG
+   ================================================== */
+
+waitForImages().then(() => {
+
+  buildPortfolio();
+
 });
 
 
 /* ==================================================
-   ESC-TASTE
+   RESIZE
    ================================================== */
 
-document.addEventListener("keydown", event => {
+let resizeTimer;
 
-  if (event.key === "Escape" && viewer.open) {
+window.addEventListener(
+  "resize",
+  () => {
+
+    clearTimeout(resizeTimer);
+
+    resizeTimer = setTimeout(() => {
+
+      buildPortfolio();
+
+    }, 150);
+
+  }
+);
+
+
+/* ==================================================
+   FULLSCREEN VIEWER
+   ================================================== */
+
+close.addEventListener(
+  "click",
+  () => {
     viewer.close();
   }
+);
 
-});
+
+viewer.addEventListener(
+  "click",
+  event => {
+
+    if (event.target === viewer) {
+      viewer.close();
+    }
+
+  }
+);
