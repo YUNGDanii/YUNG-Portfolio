@@ -1,162 +1,138 @@
 const order = [
-  "8455",
-  "8467",
+  "8455","8467",
   "8442",
-  "8456",
-  "8470",
-  "8444",
-  "8446",
-  "8458",
-  "8461",
+  "8456","8470",
+  "8444","8446",
+  "8458","8461",
   "8448",
-  "8472",
-  "8475",
-  "8465",
-  "8462",
-  "8451",
-  "8477",
-  "8452",
-  "8466",
+  "8472","8475",
+  "8465","8462",
+  "8451","8477",
+  "8452","8466",
   "8441",
   "8454",
-  "8443",
-  "8468",
-  "8457",
-  "8469",
-  "8445",
-  "8459",
-  "8473",
-  "8447",
-  "8476",
-  "8474",
-  "8449",
-  "8463",
-  "8460",
-  "8450",
+  "8443","8468",
+  "8457","8469",
+  "8445","8459",
+  "8473","8447",
+  "8476","8474",
+  "8449","8463",
+  "8460","8450",
   "8464",
   "8478",
   "8453"
 ];
 
-
 const grid = document.getElementById("portfolio");
-
 const viewer = document.getElementById("viewer");
-
-const viewerImage =
-  document.getElementById("viewer-image");
-
-const close =
-  document.getElementById("close");
-
-
-/* =========================
-   ZWEI MASONRY-SPALTEN
-   ========================= */
+const viewerImage = document.getElementById("viewer-image");
+const close = document.getElementById("close");
 
 const columns = [
   document.createElement("div"),
   document.createElement("div")
 ];
 
-
 columns.forEach(column => {
-
   column.className = "portfolio-column";
-
   grid.appendChild(column);
+});
+
+
+/* ==================================================
+   BILDER VORBEREITEN
+   ================================================== */
+
+const items = order.map((id, index) => {
+
+  const figure = document.createElement("figure");
+  figure.className = "item";
+
+  const img = document.createElement("img");
+
+  img.src = `images/${id}.jpeg`;
+
+  img.alt = `YUNG portfolio image ${index + 1}`;
+
+  img.decoding = "async";
+
+  /*
+    Wichtig:
+    Keine Lazy-Loads während des initialen
+    Masonry-Aufbaus.
+  */
+  img.loading = "eager";
+
+  figure.appendChild(img);
+
+  figure.addEventListener("click", () => {
+    viewerImage.src = img.src;
+    viewerImage.alt = img.alt;
+    viewer.showModal();
+  });
+
+  return {
+    id,
+    figure,
+    img,
+    index
+  };
+});
+
+
+/* ==================================================
+   ALLE BILDER LADEN
+   ================================================== */
+
+const imagePromises = items.map(item => {
+
+  return new Promise(resolve => {
+
+    if (item.img.complete && item.img.naturalWidth > 0) {
+      resolve(item);
+      return;
+    }
+
+    item.img.addEventListener("load", () => {
+      resolve(item);
+    }, { once: true });
+
+    item.img.addEventListener("error", () => {
+      resolve(item);
+    }, { once: true });
+
+  });
 
 });
 
 
-/*
-  Höhe der beiden Spalten.
+/* ==================================================
+   MASONRY AUFBAUEN
+   ================================================== */
 
-  Die nächste Tasche wird immer in die
-  aktuell kürzere Spalte gesetzt.
-*/
+Promise.all(imagePromises).then(loadedItems => {
 
-const columnHeights = [0, 0];
+  const columnHeights = [0, 0];
 
+  const gridWidth = grid.clientWidth;
 
-/* =========================
-   BILDER ERSTELLEN
-   ========================= */
-
-order.forEach((id, index) => {
-
-  const figure =
-    document.createElement("figure");
-
-  figure.className = "item";
+  const columnWidth =
+    (gridWidth - 3) / 2;
 
 
-  const img =
-    document.createElement("img");
-
-
-  img.src = `images/${id}.jpeg`;
-
-  img.alt =
-    `YUNG Portfolio — Bild ${index + 1}`;
-
-
-  img.loading =
-    index < 4
-      ? "eager"
-      : "lazy";
-
-
-  img.decoding = "async";
-
-
-  figure.appendChild(img);
-
-
-  /* =========================
-     LIGHTBOX
-     ========================= */
-
-  figure.addEventListener("click", () => {
-
-    viewerImage.src = img.src;
-
-    viewerImage.alt = img.alt;
-
-    viewer.showModal();
-
-  });
-
-
-  /* =========================
-     MASONRY POSITIONIERUNG
-     ========================= */
-
-  img.addEventListener("load", () => {
+  loadedItems.forEach(item => {
 
     const ratio =
-      img.naturalHeight /
-      img.naturalWidth;
+      item.img.naturalHeight /
+      item.img.naturalWidth;
 
-
-    /*
-      Tatsächliche Breite einer Spalte.
-    */
-
-    const columnWidth =
-      grid.clientWidth / 2;
-
-
-    /*
-      Daraus berechnen wir die Bildhöhe.
-    */
-
-    const imageHeight =
+    const height =
       columnWidth * ratio;
 
 
     /*
-      Kürzere Spalte finden.
+      Immer die aktuell kürzere
+      Spalte nehmen.
     */
 
     const shortest =
@@ -165,58 +141,28 @@ order.forEach((id, index) => {
         : 1;
 
 
-    /*
-      Bild dort einsetzen.
-    */
+    columns[shortest].appendChild(item.figure);
 
-    columns[shortest].appendChild(figure);
-
-
-    /*
-      Höhe der Spalte aktualisieren.
-    */
-
-    columnHeights[shortest] +=
-      imageHeight;
+    columnHeights[shortest] += height + 3;
 
   });
 
 });
 
 
-/* =========================
-   LIGHTBOX SCHLIESSEN
-   ========================= */
+/* ==================================================
+   FULLSCREEN VIEWER
+   ================================================== */
 
 close.addEventListener("click", () => {
-
   viewer.close();
-
 });
 
 
 viewer.addEventListener("click", event => {
 
   if (event.target === viewer) {
-
     viewer.close();
-
-  }
-
-});
-
-
-/* ESC = SCHLIESSEN */
-
-document.addEventListener("keydown", event => {
-
-  if (
-    event.key === "Escape" &&
-    viewer.open
-  ) {
-
-    viewer.close();
-
   }
 
 });
