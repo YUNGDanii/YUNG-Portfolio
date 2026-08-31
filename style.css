@@ -15,6 +15,7 @@ body {
   overflow-x: hidden;
 }
 
+
 /* =========================
    HERO
    ========================= */
@@ -32,38 +33,107 @@ body {
   width: 100%;
   height: 100%;
   display: block;
+
   object-fit: cover;
-  object-position: 58% center;
-  transform: scale(1.25) !important;
+
+  /* Position des Fotos */
+  object-position: 50% center;
+
+  /* leichter Zoom */
+  transform: scale(1.25);
 }
 
 
 /* =========================
-   CREDIT
+   HERO INFO
    ========================= */
 
-.credit {
-  padding: 13px 14px 17px;
+.hero-info {
+  position: absolute;
+
+  left: 60px;
+  bottom: 135px;
+
+  z-index: 2;
+
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 12px;
+  flex-direction: column;
+  align-items: flex-start;
 
-  font-size: 10px;
-  line-height: 1.3;
-  letter-spacing: .02em;
-
-  background: #111;
+  color: #fff;
 }
 
-.credit span {
-  opacity: .9;
+
+/* =========================
+   TITLE
+   ========================= */
+
+.hero-title {
+  margin: 0 0 42px;
+
+  font-size: 42px;
+  font-weight: 400;
+  line-height: 1;
+
+  letter-spacing: -0.03em;
 }
 
-.credit a {
-  color: inherit;
-  text-decoration: none;
-  opacity: .55;
+
+/* =========================
+   PHOTOGRAPHY
+   ========================= */
+
+.hero-credit {
+  margin: 0 0 16px;
+
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.2;
+
+  letter-spacing: -0.015em;
+}
+
+
+/* =========================
+   LINK
+   ========================= */
+
+.hero-link {
+  color: #fff;
+
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.2;
+
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+
+  opacity: 1;
+}
+
+
+/* =========================
+   SCROLL ARROW
+   ========================= */
+
+.scroll-arrow {
+  position: absolute;
+
+  left: 60px;
+  bottom: 48px;
+
+  z-index: 2;
+
+  color: #fff;
+
+  font-size: 48px;
+  font-weight: 300;
+  line-height: .5;
+
+  transform: scaleX(1.15);
+
+  pointer-events: none;
 }
 
 
@@ -76,15 +146,18 @@ body {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 
   gap: 3px;
+
   padding: 0 3px 3px;
 }
 
 .item {
   display: block;
+
   margin: 0;
   padding: 0;
 
   overflow: hidden;
+
   background: #191919;
 
   cursor: zoom-in;
@@ -96,6 +169,7 @@ body {
 
 .item img {
   display: block;
+
   width: 100%;
   height: auto;
 }
@@ -127,6 +201,7 @@ dialog::backdrop {
 dialog img {
   width: 100%;
   height: 100%;
+
   object-fit: contain;
 }
 
@@ -171,13 +246,28 @@ dialog img {
   }
 
   .hero img {
-    transform: scale(1.25) !important;
-    object-position: 58% center;
+    transform: scale(1.25);
+    object-position: 50% center;
   }
 
-  .credit {
-    padding-left: 22px;
-    padding-right: 22px;
+  .hero-info {
+    left: 60px;
+    bottom: 120px;
+  }
+
+  .hero-title {
+    font-size: 48px;
+    margin-bottom: 45px;
+  }
+
+  .hero-credit,
+  .hero-link {
+    font-size: 24px;
+  }
+
+  .scroll-arrow {
+    left: 60px;
+    bottom: 45px;
   }
 
   .portfolio-grid {
