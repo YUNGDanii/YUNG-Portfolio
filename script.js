@@ -246,7 +246,16 @@ function buildMasonry(loadedItems) {
      BILDER VERTEILEN
      ================================================== */
 
-  loadedItems.forEach(item => {
+  loadedItems
+  .filter(item => {
+    // 8453 nur auf Desktop entfernen
+    if (window.innerWidth >= 700 && item.id === "8453") {
+      return false;
+    }
+
+    return true;
+  })
+  .forEach(item => {
 
     /*
       Falls ein Bild nicht geladen werden konnte,
