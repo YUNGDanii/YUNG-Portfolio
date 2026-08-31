@@ -1,7 +1,3 @@
-/* ==================================================
-   RESET
-   ================================================== */
-
 * {
   box-sizing: border-box;
 }
@@ -10,481 +6,136 @@ html,
 body {
   margin: 0;
   padding: 0;
-
   background: #111;
   color: #fff;
-
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 body {
   overflow-x: hidden;
 }
 
-
-/* ==================================================
+/* =========================
    HERO
-   ================================================== */
+   ========================= */
 
 .hero {
   position: relative;
-
   width: 100%;
   height: 72vh;
   min-height: 480px;
-
   overflow: hidden;
-
   background: #111;
 }
 
-.hero > img {
+.hero img {
   width: 100%;
   height: 100%;
-
   display: block;
-
   object-fit: cover;
-
-  /*
-    Hier können wir später ganz einfach
-    den Bildausschnitt verändern.
-  */
-
   object-position: 62% center;
-
-  transform: scale(1.25);
+  transform: scale(1.25) !important;
 }
 
+/* =========================
+   CREDIT
+   ========================= */
 
-/* ==================================================
-   HERO INFORMATION
-   ================================================== */
-
-.hero-info {
-  position: absolute;
-
-  left: 14px;
-  bottom: 90px;
-
-  z-index: 5;
-
+.credit {
+  padding: 13px 14px 17px;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-
-  text-shadow:
-    0 1px 8px rgba(0, 0, 0, .35);
-}
-
-
-.hero-title {
-  margin: 0 0 24px;
-
-  font-size: 30px;
-  font-weight: 400;
-
-  line-height: 1;
-
-  letter-spacing: -.03em;
-}
-
-
-.hero-credit {
-  margin: 0 0 6px;
-
-  font-size: 11px;
-
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 10px;
   line-height: 1.3;
+  letter-spacing: .02em;
+  background: #111;
 }
 
-
-.hero-link {
-  color: #fff;
-
-  font-size: 11px;
-
-  line-height: 1.3;
-
-  text-decoration: underline;
-
-  text-underline-offset: 3px;
-
-  opacity: .75;
-}
-
-
-.hero-link:hover {
-  opacity: 1;
-}
-
-
-/* ==================================================
-   SCROLL ARROW
-   ================================================== */
-
-.scroll-arrow {
-  position: absolute;
-
-  left: 14px;
-  bottom: 24px;
-
-  z-index: 5;
-
-  font-size: 26px;
-
-  font-weight: 300;
-
-  line-height: 1;
-
+.credit span {
   opacity: .9;
 }
 
+.credit a {
+  color: inherit;
+  text-decoration: none;
+  opacity: .55;
+}
 
-/* ==================================================
+/* =========================
    PORTFOLIO
-   ================================================== */
+   ========================= */
 
-/*
-   KEIN GRID.
-
-   Das ist wichtig.
-
-   Jedes Bild bekommt seinen eigenen Platz.
-   Dadurch können wir die Bilder versetzen,
-   ohne dass schwarze Grid-Lücken entstehen.
-*/
-
-.portfolio {
-  width: 100%;
-
-  display: flex;
-
-  flex-direction: column;
-
-  padding: 0 0 30px;
-
-  background: #111;
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px;
+  padding: 0 3px 3px;
 }
 
-
-/* ==================================================
-   EINZELNES BILD
-   ================================================== */
-
-.portfolio-item {
-  position: relative;
-
+.item {
   display: block;
-
-  margin-top: 18px;
-  margin-bottom: 0;
-
-  padding: 0;
-
-  line-height: 0;
-
-  overflow: hidden;
-
-  cursor: zoom-in;
-
-  background: #111;
-}
-
-
-/* ==================================================
-   LINK / RECHTS
-   ================================================== */
-
-.portfolio-item.left {
-  align-self: flex-start;
-
-  margin-left: 0;
-}
-
-.portfolio-item.right {
-  align-self: flex-end;
-
-  margin-right: 0;
-}
-
-
-/* ==================================================
-   BILD
-   ================================================== */
-
-.portfolio-item img {
-  display: block;
-
-  width: 100%;
-  height: auto;
-
   margin: 0;
   padding: 0;
+  overflow: hidden;
+  background: #191919;
+  cursor: zoom-in;
 }
 
-
-/* ==================================================
-   VERSCHOBENE BILDER
-   ==================================================
-
-   Hier entsteht der Editorial-Look.
-
-   Nicht jedes Bild hat dieselbe Breite.
-*/
-
-.portfolio-item:nth-child(1) {
-  width: 86%;
+.item.full {
+  grid-column: 1 / -1;
 }
 
-.portfolio-item:nth-child(2) {
-  width: 72%;
-  margin-top: 8px;
+.item img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
-.portfolio-item:nth-child(3) {
-  width: 66%;
-  margin-top: 28px;
-}
-
-.portfolio-item:nth-child(4) {
-  width: 88%;
-  margin-top: 12px;
-}
-
-.portfolio-item:nth-child(5) {
-  width: 76%;
-  margin-top: 30px;
-}
-
-.portfolio-item:nth-child(6) {
-  width: 65%;
-  margin-top: 8px;
-}
-
-.portfolio-item:nth-child(7) {
-  width: 90%;
-  margin-top: 32px;
-}
-
-.portfolio-item:nth-child(8) {
-  width: 73%;
-  margin-top: 10px;
-}
-
-.portfolio-item:nth-child(9) {
-  width: 68%;
-  margin-top: 30px;
-}
-
-.portfolio-item:nth-child(10) {
-  width: 86%;
-  margin-top: 8px;
-}
-
-.portfolio-item:nth-child(11) {
-  width: 77%;
-  margin-top: 30px;
-}
-
-.portfolio-item:nth-child(12) {
-  width: 66%;
-  margin-top: 12px;
-}
-
-.portfolio-item:nth-child(13) {
-  width: 89%;
-  margin-top: 30px;
-}
-
-.portfolio-item:nth-child(14) {
-  width: 72%;
-  margin-top: 8px;
-}
-
-.portfolio-item:nth-child(15) {
-  width: 68%;
-  margin-top: 28px;
-}
-
-.portfolio-item:nth-child(16) {
-  width: 87%;
-  margin-top: 12px;
-}
-
-.portfolio-item:nth-child(17) {
-  width: 78%;
-  margin-top: 32px;
-}
-
-.portfolio-item:nth-child(18) {
-  width: 67%;
-  margin-top: 8px;
-}
-
-.portfolio-item:nth-child(19) {
-  width: 90%;
-  margin-top: 30px;
-}
-
-.portfolio-item:nth-child(20) {
-  width: 73%;
-  margin-top: 10px;
-}
-
-.portfolio-item:nth-child(21) {
-  width: 65%;
-  margin-top: 30px;
-}
-
-.portfolio-item:nth-child(22) {
-  width: 87%;
-  margin-top: 8px;
-}
-
-.portfolio-item:nth-child(23) {
-  width: 77%;
-  margin-top: 28px;
-}
-
-.portfolio-item:nth-child(24) {
-  width: 69%;
-  margin-top: 12px;
-}
-
-.portfolio-item:nth-child(25) {
-  width: 89%;
-  margin-top: 30px;
-}
-
-.portfolio-item:nth-child(26) {
-  width: 74%;
-  margin-top: 8px;
-}
-
-.portfolio-item:nth-child(27) {
-  width: 67%;
-  margin-top: 32px;
-}
-
-.portfolio-item:nth-child(28) {
-  width: 86%;
-  margin-top: 10px;
-}
-
-.portfolio-item:nth-child(29) {
-  width: 78%;
-  margin-top: 30px;
-}
-
-.portfolio-item:nth-child(30) {
-  width: 68%;
-  margin-top: 8px;
-}
-
-.portfolio-item:nth-child(31) {
-  width: 90%;
-  margin-top: 30px;
-}
-
-.portfolio-item:nth-child(32) {
-  width: 72%;
-  margin-top: 12px;
-}
-
-.portfolio-item:nth-child(33) {
-  width: 66%;
-  margin-top: 28px;
-}
-
-.portfolio-item:nth-child(34) {
-  width: 87%;
-  margin-top: 8px;
-}
-
-.portfolio-item:nth-child(35) {
-  width: 76%;
-  margin-top: 30px;
-}
-
-.portfolio-item:nth-child(36) {
-  width: 88%;
-  margin-top: 10px;
-}
-
-
-/* ==================================================
+/* =========================
    FULLSCREEN VIEWER
-   ================================================== */
+   ========================= */
 
 dialog {
   width: 100vw;
   max-width: 100vw;
-
   height: 100vh;
   max-height: 100vh;
-
   margin: 0;
   padding: 0;
-
   border: 0;
-
-  background: rgba(0, 0, 0, .97);
+  background: rgba(0, 0, 0, .96);
 }
 
 dialog::backdrop {
-  background: rgba(0, 0, 0, .97);
+  background: rgba(0, 0, 0, .96);
 }
-
 
 dialog img {
   width: 100%;
   height: 100%;
-
   object-fit: contain;
 }
 
-
-/* ==================================================
-   CLOSE
-   ================================================== */
-
 #close {
   position: fixed;
-
-  top: max(
-    14px,
-    env(safe-area-inset-top)
-  );
-
+  top: max(14px, env(safe-area-inset-top));
   right: 14px;
-
-  z-index: 20;
-
+  z-index: 10;
   width: 38px;
   height: 38px;
-
   border: 0;
   border-radius: 50%;
-
   background: rgba(255, 255, 255, .14);
-
   color: #fff;
-
   font-size: 25px;
-
   line-height: 1;
-
-  cursor: pointer;
 }
 
-
-/* ==================================================
+/* =========================
    DESKTOP
-   ================================================== */
+   ========================= */
 
 @media (min-width: 700px) {
 
@@ -492,51 +143,18 @@ dialog img {
     height: 78vh;
   }
 
-
-  .hero > img {
+  .hero img {
+    transform: scale(1.25) !important;
     object-position: 62% center;
-
-    transform: scale(1.25);
   }
 
-
-  .hero-info {
-    left: 30px;
-    bottom: 110px;
+  .credit {
+    padding-left: 22px;
+    padding-right: 22px;
   }
 
-
-  .hero-title {
-    font-size: 42px;
-    margin-bottom: 30px;
+  .portfolio-grid {
+    gap: 5px;
+    padding: 0 5px 5px;
   }
-
-
-  .hero-credit,
-  .hero-link {
-    font-size: 14px;
-  }
-
-
-  .scroll-arrow {
-    left: 30px;
-    bottom: 34px;
-
-    font-size: 32px;
-  }
-
-
-  /*
-    Desktop etwas großzügiger.
-  */
-
-  .portfolio {
-    padding-bottom: 60px;
-  }
-
-
-  .portfolio-item {
-    margin-top: 35px;
-  }
-
 }
