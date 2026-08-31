@@ -1,3 +1,7 @@
+/* ==================================================
+   RESET
+   ================================================== */
+
 * {
   box-sizing: border-box;
 }
@@ -10,7 +14,10 @@ body {
   background: #111;
   color: #fff;
 
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
 }
 
 body {
@@ -18,9 +25,9 @@ body {
 }
 
 
-/* =========================
+/* ==================================================
    HERO
-   ========================= */
+   ================================================== */
 
 .hero {
   position: relative;
@@ -34,7 +41,7 @@ body {
   background: #111;
 }
 
-.hero img {
+.hero > img {
   width: 100%;
   height: 100%;
 
@@ -42,21 +49,26 @@ body {
 
   object-fit: cover;
 
+  /*
+    Hier können wir später ganz einfach
+    den Bildausschnitt verändern.
+  */
+
   object-position: 62% center;
 
   transform: scale(1.25);
 }
 
 
-/* =========================
-   HERO INFO
-   ========================= */
+/* ==================================================
+   HERO INFORMATION
+   ================================================== */
 
 .hero-info {
   position: absolute;
 
   left: 14px;
-  bottom: 85px;
+  bottom: 90px;
 
   z-index: 5;
 
@@ -64,110 +76,145 @@ body {
   flex-direction: column;
   align-items: flex-start;
 
-  color: #fff;
+  text-shadow:
+    0 1px 8px rgba(0, 0, 0, .35);
 }
+
 
 .hero-title {
   margin: 0 0 24px;
 
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 400;
+
   line-height: 1;
 
-  letter-spacing: -0.03em;
+  letter-spacing: -.03em;
 }
+
 
 .hero-credit {
-  margin: 0 0 7px;
+  margin: 0 0 6px;
 
   font-size: 11px;
+
   line-height: 1.3;
 }
+
 
 .hero-link {
   color: #fff;
 
   font-size: 11px;
+
   line-height: 1.3;
 
   text-decoration: underline;
+
   text-underline-offset: 3px;
+
+  opacity: .75;
 }
 
 
-/* =========================
+.hero-link:hover {
+  opacity: 1;
+}
+
+
+/* ==================================================
    SCROLL ARROW
-   ========================= */
+   ================================================== */
 
 .scroll-arrow {
   position: absolute;
 
   left: 14px;
-  bottom: 25px;
+  bottom: 24px;
 
   z-index: 5;
 
-  font-size: 30px;
+  font-size: 26px;
+
   font-weight: 300;
+
   line-height: 1;
 
-  pointer-events: none;
+  opacity: .9;
 }
 
 
-/* =========================
+/* ==================================================
    PORTFOLIO
-   ========================= */
+   ================================================== */
 
 /*
-  Kein Grid.
+   KEIN GRID.
 
-  Jedes Bild bekommt seine eigene Zeile.
-  Dadurch können wir die Bilder bewusst
-  gegeneinander verschieben.
+   Das ist wichtig.
+
+   Jedes Bild bekommt seinen eigenen Platz.
+   Dadurch können wir die Bilder versetzen,
+   ohne dass schwarze Grid-Lücken entstehen.
 */
 
-.portfolio-grid {
+.portfolio {
   width: 100%;
 
   display: flex;
+
   flex-direction: column;
 
-  gap: 0;
-
-  padding: 0;
+  padding: 0 0 30px;
 
   background: #111;
 }
 
+
+/* ==================================================
+   EINZELNES BILD
+   ================================================== */
+
 .portfolio-item {
   position: relative;
 
-  width: var(--width);
+  display: block;
 
-  margin-top: var(--gap);
+  margin-top: 18px;
   margin-bottom: 0;
 
   padding: 0;
 
-  overflow: hidden;
+  line-height: 0;
 
-  background: #191919;
+  overflow: hidden;
 
   cursor: zoom-in;
 
-  line-height: 0;
+  background: #111;
 }
 
+
+/* ==================================================
+   LINK / RECHTS
+   ================================================== */
+
 .portfolio-item.left {
-  margin-left: var(--offset);
-  margin-right: auto;
+  align-self: flex-start;
+
+  margin-left: 0;
 }
 
 .portfolio-item.right {
-  margin-left: auto;
-  margin-right: var(--offset);
+  align-self: flex-end;
+
+  margin-right: 0;
 }
+
+
+/* ==================================================
+   BILD
+   ================================================== */
 
 .portfolio-item img {
   display: block;
@@ -180,9 +227,198 @@ body {
 }
 
 
-/* =========================
+/* ==================================================
+   VERSCHOBENE BILDER
+   ==================================================
+
+   Hier entsteht der Editorial-Look.
+
+   Nicht jedes Bild hat dieselbe Breite.
+*/
+
+.portfolio-item:nth-child(1) {
+  width: 86%;
+}
+
+.portfolio-item:nth-child(2) {
+  width: 72%;
+  margin-top: 8px;
+}
+
+.portfolio-item:nth-child(3) {
+  width: 66%;
+  margin-top: 28px;
+}
+
+.portfolio-item:nth-child(4) {
+  width: 88%;
+  margin-top: 12px;
+}
+
+.portfolio-item:nth-child(5) {
+  width: 76%;
+  margin-top: 30px;
+}
+
+.portfolio-item:nth-child(6) {
+  width: 65%;
+  margin-top: 8px;
+}
+
+.portfolio-item:nth-child(7) {
+  width: 90%;
+  margin-top: 32px;
+}
+
+.portfolio-item:nth-child(8) {
+  width: 73%;
+  margin-top: 10px;
+}
+
+.portfolio-item:nth-child(9) {
+  width: 68%;
+  margin-top: 30px;
+}
+
+.portfolio-item:nth-child(10) {
+  width: 86%;
+  margin-top: 8px;
+}
+
+.portfolio-item:nth-child(11) {
+  width: 77%;
+  margin-top: 30px;
+}
+
+.portfolio-item:nth-child(12) {
+  width: 66%;
+  margin-top: 12px;
+}
+
+.portfolio-item:nth-child(13) {
+  width: 89%;
+  margin-top: 30px;
+}
+
+.portfolio-item:nth-child(14) {
+  width: 72%;
+  margin-top: 8px;
+}
+
+.portfolio-item:nth-child(15) {
+  width: 68%;
+  margin-top: 28px;
+}
+
+.portfolio-item:nth-child(16) {
+  width: 87%;
+  margin-top: 12px;
+}
+
+.portfolio-item:nth-child(17) {
+  width: 78%;
+  margin-top: 32px;
+}
+
+.portfolio-item:nth-child(18) {
+  width: 67%;
+  margin-top: 8px;
+}
+
+.portfolio-item:nth-child(19) {
+  width: 90%;
+  margin-top: 30px;
+}
+
+.portfolio-item:nth-child(20) {
+  width: 73%;
+  margin-top: 10px;
+}
+
+.portfolio-item:nth-child(21) {
+  width: 65%;
+  margin-top: 30px;
+}
+
+.portfolio-item:nth-child(22) {
+  width: 87%;
+  margin-top: 8px;
+}
+
+.portfolio-item:nth-child(23) {
+  width: 77%;
+  margin-top: 28px;
+}
+
+.portfolio-item:nth-child(24) {
+  width: 69%;
+  margin-top: 12px;
+}
+
+.portfolio-item:nth-child(25) {
+  width: 89%;
+  margin-top: 30px;
+}
+
+.portfolio-item:nth-child(26) {
+  width: 74%;
+  margin-top: 8px;
+}
+
+.portfolio-item:nth-child(27) {
+  width: 67%;
+  margin-top: 32px;
+}
+
+.portfolio-item:nth-child(28) {
+  width: 86%;
+  margin-top: 10px;
+}
+
+.portfolio-item:nth-child(29) {
+  width: 78%;
+  margin-top: 30px;
+}
+
+.portfolio-item:nth-child(30) {
+  width: 68%;
+  margin-top: 8px;
+}
+
+.portfolio-item:nth-child(31) {
+  width: 90%;
+  margin-top: 30px;
+}
+
+.portfolio-item:nth-child(32) {
+  width: 72%;
+  margin-top: 12px;
+}
+
+.portfolio-item:nth-child(33) {
+  width: 66%;
+  margin-top: 28px;
+}
+
+.portfolio-item:nth-child(34) {
+  width: 87%;
+  margin-top: 8px;
+}
+
+.portfolio-item:nth-child(35) {
+  width: 76%;
+  margin-top: 30px;
+}
+
+.portfolio-item:nth-child(36) {
+  width: 88%;
+  margin-top: 10px;
+}
+
+
+/* ==================================================
    FULLSCREEN VIEWER
-   ========================= */
+   ================================================== */
 
 dialog {
   width: 100vw;
@@ -196,12 +432,13 @@ dialog {
 
   border: 0;
 
-  background: rgba(0, 0, 0, .96);
+  background: rgba(0, 0, 0, .97);
 }
 
 dialog::backdrop {
-  background: rgba(0, 0, 0, .96);
+  background: rgba(0, 0, 0, .97);
 }
+
 
 dialog img {
   width: 100%;
@@ -211,17 +448,21 @@ dialog img {
 }
 
 
-/* =========================
-   CLOSE BUTTON
-   ========================= */
+/* ==================================================
+   CLOSE
+   ================================================== */
 
 #close {
   position: fixed;
 
-  top: max(14px, env(safe-area-inset-top));
+  top: max(
+    14px,
+    env(safe-area-inset-top)
+  );
+
   right: 14px;
 
-  z-index: 10;
+  z-index: 20;
 
   width: 38px;
   height: 38px;
@@ -234,15 +475,16 @@ dialog img {
   color: #fff;
 
   font-size: 25px;
+
   line-height: 1;
 
   cursor: pointer;
 }
 
 
-/* =========================
+/* ==================================================
    DESKTOP
-   ========================= */
+   ================================================== */
 
 @media (min-width: 700px) {
 
@@ -250,37 +492,51 @@ dialog img {
     height: 78vh;
   }
 
-  .hero img {
-    transform: scale(1.25);
+
+  .hero > img {
     object-position: 62% center;
+
+    transform: scale(1.25);
   }
+
 
   .hero-info {
-    left: 22px;
-    bottom: 105px;
+    left: 30px;
+    bottom: 110px;
   }
 
+
   .hero-title {
-    font-size: 36px;
+    font-size: 42px;
+    margin-bottom: 30px;
   }
+
 
   .hero-credit,
   .hero-link {
-    font-size: 13px;
+    font-size: 14px;
   }
 
+
   .scroll-arrow {
-    left: 22px;
-    bottom: 35px;
+    left: 30px;
+    bottom: 34px;
+
+    font-size: 32px;
   }
 
 
   /*
-    Desktop bekommt etwas mehr Luft
-    zwischen den Bildern.
+    Desktop etwas großzügiger.
   */
 
-  .portfolio-item {
-    margin-top: calc(var(--gap) * 1.4);
+  .portfolio {
+    padding-bottom: 60px;
   }
+
+
+  .portfolio-item {
+    margin-top: 35px;
+  }
+
 }
