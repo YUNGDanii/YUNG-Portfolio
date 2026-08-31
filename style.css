@@ -50,10 +50,6 @@ body {
 
   object-fit: cover;
 
-  /*
-    MOBILE
-    Aktuelle funktionierende Position
-  */
   object-position: 70% 30%;
 
   transform: scale(1);
@@ -73,7 +69,9 @@ body {
   z-index: 5;
 
   display: flex;
+
   flex-direction: column;
+
   align-items: flex-start;
 
   color: #fff;
@@ -83,10 +81,40 @@ body {
 }
 
 
+/* ==================================================
+   EIGENER ACCOUNT
+   ================================================== */
+
+.hero-own-link {
+  color: #fff;
+
+  font-size: 15px;
+
+  line-height: 1.3;
+
+  text-decoration: underline;
+
+  text-underline-offset: 3px;
+
+  opacity: .75;
+
+  margin: 0 0 12px;
+}
+
+.hero-own-link:hover {
+  opacity: 1;
+}
+
+
+/* ==================================================
+   TITEL
+   ================================================== */
+
 .hero-title {
   margin: 0 0 28px;
 
   font-size: 38px;
+
   font-weight: 400;
 
   line-height: 1;
@@ -94,6 +122,10 @@ body {
   letter-spacing: -.03em;
 }
 
+
+/* ==================================================
+   FOTOGRAFIE CREDIT
+   ================================================== */
 
 .hero-credit {
   margin: 0 0 9px;
@@ -103,6 +135,10 @@ body {
   line-height: 1.3;
 }
 
+
+/* ==================================================
+   SELINNA LINK
+   ================================================== */
 
 .hero-link {
   color: #fff;
@@ -117,7 +153,6 @@ body {
 
   opacity: .75;
 }
-
 
 .hero-link:hover {
   opacity: 1;
@@ -139,6 +174,7 @@ body {
   color: #fff;
 
   font-size: 28px;
+
   font-weight: 300;
 
   line-height: 1;
@@ -150,16 +186,6 @@ body {
 /* ==================================================
    PORTFOLIO
    ================================================== */
-
-/*
-  KEIN NORMALES GRID.
-
-  Zwei echte Spalten.
-  Das JavaScript entscheidet,
-  in welche Spalte das nächste Bild kommt.
-
-  Dadurch entsteht der versetzte Look.
-*/
 
 .portfolio {
   display: grid;
@@ -315,34 +341,18 @@ dialog img {
   }
 
 
-  /*
-    Desktop-Cropping näher an der
-    Selina-Wefolio-Referenz.
-
-    Weniger Zoom als vorher und
-    das Label etwas weiter rechts.
-  */
-
   .hero > img {
-    object-position: 62% center;
+    object-position: 64% center;
 
     transform: scale(1.12);
   }
 
 
   /* ----------------------------------------------
-     HERO TEXT
+     HERO INFORMATION
      ---------------------------------------------- */
 
   .hero-info {
-    /*
-      Nicht mehr ganz links.
-
-      Der Text sitzt dadurch deutlich
-      näher an der Mitte des Bildes,
-      ähnlich wie bei Selina.
-    */
-
     left: 50%;
 
     bottom: 21%;
@@ -357,6 +367,21 @@ dialog img {
   }
 
 
+  /* ----------------------------------------------
+     EIGENER ACCOUNT
+     ---------------------------------------------- */
+
+  .hero-own-link {
+    font-size: 15px;
+
+    margin-bottom: 12px;
+  }
+
+
+  /* ----------------------------------------------
+     YUNG
+     ---------------------------------------------- */
+
   .hero-title {
     font-size: 52px;
 
@@ -366,6 +391,10 @@ dialog img {
   }
 
 
+  /* ----------------------------------------------
+     CREDIT
+     ---------------------------------------------- */
+
   .hero-credit {
     margin-bottom: 8px;
 
@@ -373,19 +402,13 @@ dialog img {
   }
 
 
+  /* ----------------------------------------------
+     SELINNA
+     ---------------------------------------------- */
+
   .hero-link {
     font-size: 15px;
   }
-
-
-  /*
-    Selinas Version hat Credit + Link
-    praktisch auf einer Linie.
-
-    Wir lassen die beiden Elemente
-    trotzdem untereinander, damit dein
-    HTML unverändert bleiben kann.
-  */
 
 
   /* ----------------------------------------------
@@ -408,6 +431,9 @@ dialog img {
      ---------------------------------------------- */
 
   .portfolio {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+
     gap: 5px;
 
     padding: 0 5px 5px;
@@ -444,6 +470,78 @@ dialog img {
 
   .hero-link {
     font-size: 16px;
+  }
+
+}
+
+
+/* ==================================================
+   HANDY QUERFORMAT
+   ================================================== */
+
+@media (orientation: landscape) and (min-width: 700px) {
+
+  .hero {
+    height: 100vh;
+
+    min-height: 0;
+  }
+
+
+  .hero > img {
+    object-position: 64% center;
+
+    transform: scale(1.12);
+  }
+
+
+  .hero-info {
+    left: 50%;
+
+    bottom: 20%;
+
+    transform: translateX(-50%);
+
+    align-items: center;
+
+    text-align: center;
+  }
+
+
+  .hero-own-link {
+    font-size: 13px;
+
+    margin-bottom: 9px;
+  }
+
+
+  .hero-title {
+    font-size: 42px;
+
+    margin-bottom: 22px;
+  }
+
+
+  .hero-credit {
+    font-size: 14px;
+
+    margin-bottom: 6px;
+  }
+
+
+  .hero-link {
+    font-size: 13px;
+  }
+
+
+  .scroll-arrow {
+    left: 50%;
+
+    bottom: 20px;
+
+    transform: translateX(-50%);
+
+    font-size: 28px;
   }
 
 }
