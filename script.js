@@ -23,6 +23,7 @@ const order = [
   "8453"
 ];
 
+
 const grid = document.getElementById("portfolio");
 const viewer = document.getElementById("viewer");
 const viewerImage = document.getElementById("viewer-image");
@@ -30,98 +31,85 @@ const close = document.getElementById("close");
 
 
 /* ==================================================
-   SPALTEN
+   ANZAHL SPALTEN
    ================================================== */
 
-function getColumnCount() {
-  return window.innerWidth >= 700 ? 3 : 2;
-}
+const isDesktop = window.innerWidth >= 700;
+
+const columnCount = isDesktop ? 3 : 2;
 
 
-let columns = [];
-let currentColumnCount = 0;
+/* ==================================================
+   SPALTEN ERSTELLEN
+   ================================================== */
 
+const columns = [];
 
-function createColumns() {
+for (let i = 0; i < columnCount; i++) {
 
-  const count = getColumnCount();
+  const column = document.createElement("div");
 
-  if (count === currentColumnCount) {
-    return;
-  }
+  column.className = "portfolio-column";
 
-  currentColumnCount = count;
+  grid.appendChild(column);
 
-  grid.innerHTML = "";
-  columns = [];
-
-  for (let i = 0; i < count; i++) {
-
-    const column = document.createElement("div");
-
-    column.className = "portfolio-column";
-
-    grid.appendChild(column);
-
-    columns.push(column);
-  }
+  columns.push(column);
 }
 
 
 /* ==================================================
-   BILDER ERSTELLEN
+   BILDER VORBEREITEN
    ================================================== */
 
-const items = order.map((id, index) => {
+const items = order
+  .filter(id => !(isDesktop && id === "8453"))
+  .map((id, index) => {
 
-  const figure = document.createElement("figure");
+    const figure = document.createElement("figure");
 
-  figure.className = "item";
-
-  const img = document.createElement("img");
-
-  img.src = `images/${id}.jpeg`;
-
-  img.alt = `YUNG portfolio image ${index + 1}`;
-
-  /*
-    Eager laden, damit beim ersten
-    Seitenaufruf nichts nachträglich
-    umsortiert wird.
-  */
-  img.loading = "eager";
-
-  img.decoding = "async";
-
-  figure.appendChild(img);
+    figure.className = "item";
 
 
-  /* ================================
-     FULLSCREEN
-     ================================ */
+    const img = document.createElement("img");
 
-  figure.addEventListener("click", () => {
+    img.src = `images/${id}.jpeg`;
 
-    viewerImage.src = img.src;
+    img.alt = `YUNG portfolio image ${index + 1}`;
 
-    viewerImage.alt = img.alt;
+    img.loading = "eager";
 
-    viewer.showModal();
+    img.decoding = "async";
+
+
+    figure.appendChild(img);
+
+
+    /* ================================================
+       FULLSCREEN VIEWER
+       ================================================ */
+
+    figure.addEventListener("click", () => {
+
+      viewerImage.src = img.src;
+
+      viewerImage.alt = img.alt;
+
+      viewer.showModal();
+
+    });
+
+
+    return {
+      id,
+      figure,
+      img
+    };
 
   });
 
 
-  return {
-    id,
-    figure,
-    img
-  };
-
-});
-
-
 /* ==================================================
-   BILDER VORLADEN
+   BILDER LADEN
    ================================================== */
 
 function waitForImage(img) {
@@ -157,21 +145,16 @@ function waitForImage(img) {
 
 
 /* ==================================================
-   MASONRY
+   PORTFOLIO AUFBAU
    ================================================== */
 
 async function buildPortfolio() {
 
   /*
-    Erst die richtige Anzahl Spalten erzeugen.
-  */
+    WICHTIG:
 
-  createColumns();
-
-
-  /*
-    Alle Bilder laden, bevor wir sie verteilen.
-    Dadurch bleibt die Reihenfolge stabil.
+    Wir bauen das Portfolio genau EINMAL.
+    Kein Neuaufbau beim Scrollen.
   */
 
   await Promise.all(
@@ -181,57 +164,48 @@ async function buildPortfolio() {
   );
 
 
-  /*
-    Falls während des Ladens die Fensterbreite
-    geändert wurde, Spalten neu bestimmen.
-  */
-
-  createColumns();
-
-
   const columnHeights =
-    new Array(columns.length).fill(0);
+    new Array(columnCount).fill(0);
 
 
   /*
-    Desktop:
-    8453 ist das letzte Bild und wird
-    auf Desktop absichtlich nicht gezeigt.
-
-    Mobile:
-    8453 bleibt drin.
+    Tatsächliche Breite einer Spalte.
   */
 
-  const isDesktop =
-    window.innerWidth >= 700;
+  const gap = isDesktop ? 5 : 3;
+
+  const totalGap =
+    gap * (columnCount - 1);
+
+  const columnWidth =
+    (grid.clientWidth - totalGap) /
+    columnCount;
 
 
-  const visibleItems =
-    isDesktop
-      ? items.filter(item => item.id !== "8453")
-      : items;
+  /* ==================================================
+     MASONRY VERTEILUNG
+     ================================================== */
 
+  items.forEach(item => {
 
-  /*
-    Jedes Bild kommt immer in
-    die aktuell kürzeste Spalte.
-  */
-
-  visibleItems.forEach(item => {
-
-    const ratio =
-      item.img.naturalHeight /
+    const width =
       item.img.naturalWidth;
 
-
-    const columnWidth =
-      grid.clientWidth /
-      columns.length;
-
-
     const height =
+      item.img.naturalHeight;
+
+
+    const ratio =
+      height / width;
+
+
+    const renderedHeight =
       columnWidth * ratio;
 
+
+    /*
+      Kürzeste Spalte finden.
+    */
 
     let shortest = 0;
 
@@ -246,7 +220,9 @@ async function buildPortfolio() {
         columnHeights[i] <
         columnHeights[shortest]
       ) {
+
         shortest = i;
+
       }
 
     }
@@ -258,7 +234,8 @@ async function buildPortfolio() {
 
 
     columnHeights[shortest] +=
-      height;
+      renderedHeight + gap;
+
   });
 
 }
@@ -272,62 +249,22 @@ buildPortfolio();
 
 
 /* ==================================================
-   RESIZE
+   FULLSCREEN VIEWER
    ================================================== */
 
-let resizeTimer;
+close.addEventListener("click", () => {
 
-window.addEventListener(
-  "resize",
-  () => {
+  viewer.close();
 
-    clearTimeout(resizeTimer);
-
-    resizeTimer = setTimeout(() => {
-
-      /*
-        Nur neu bauen, wenn wirklich
-        zwischen Mobile und Desktop
-        gewechselt wurde.
-      */
-
-      const newCount =
-        getColumnCount();
+});
 
 
-      if (
-        newCount !== currentColumnCount
-      ) {
+viewer.addEventListener("click", event => {
 
-        buildPortfolio();
+  if (event.target === viewer) {
 
-      }
-
-    }, 150);
-
-  }
-);
-
-
-/* ==================================================
-   FULLSCREEN SCHLIESSEN
-   ================================================== */
-
-close.addEventListener(
-  "click",
-  () => {
     viewer.close();
-  }
-);
-
-
-viewer.addEventListener(
-  "click",
-  event => {
-
-    if (event.target === viewer) {
-      viewer.close();
-    }
 
   }
-);
+
+});
