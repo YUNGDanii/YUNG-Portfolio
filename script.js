@@ -1,7 +1,3 @@
-/* ==================================================
-   YUNG PORTFOLIO
-   ================================================== */
-
 const order = [
   "8455","8467",
   "8442",
@@ -23,15 +19,53 @@ const order = [
   "8449","8463",
   "8460","8450",
   "8464",
-  "8478"
-  /* 8453 absichtlich entfernt */
+  "8478",
+  "8453"
 ];
 
 const grid = document.getElementById("portfolio");
-
 const viewer = document.getElementById("viewer");
 const viewerImage = document.getElementById("viewer-image");
 const close = document.getElementById("close");
+
+
+/* ==================================================
+   SPALTEN
+   ================================================== */
+
+function getColumnCount() {
+  return window.innerWidth >= 700 ? 3 : 2;
+}
+
+
+let columns = [];
+let currentColumnCount = 0;
+
+
+function createColumns() {
+
+  const count = getColumnCount();
+
+  if (count === currentColumnCount) {
+    return;
+  }
+
+  currentColumnCount = count;
+
+  grid.innerHTML = "";
+  columns = [];
+
+  for (let i = 0; i < count; i++) {
+
+    const column = document.createElement("div");
+
+    column.className = "portfolio-column";
+
+    grid.appendChild(column);
+
+    columns.push(column);
+  }
+}
 
 
 /* ==================================================
@@ -41,128 +75,181 @@ const close = document.getElementById("close");
 const items = order.map((id, index) => {
 
   const figure = document.createElement("figure");
+
   figure.className = "item";
 
   const img = document.createElement("img");
 
   img.src = `images/${id}.jpeg`;
+
   img.alt = `YUNG portfolio image ${index + 1}`;
 
   /*
-    Alle Bilder sofort laden.
-    Das verhindert, dass das Layout beim
-    ersten Öffnen falsch aufgebaut wird.
+    Eager laden, damit beim ersten
+    Seitenaufruf nichts nachträglich
+    umsortiert wird.
   */
   img.loading = "eager";
+
   img.decoding = "async";
 
   figure.appendChild(img);
 
+
+  /* ================================
+     FULLSCREEN
+     ================================ */
+
   figure.addEventListener("click", () => {
+
     viewerImage.src = img.src;
+
     viewerImage.alt = img.alt;
+
     viewer.showModal();
+
   });
+
 
   return {
     id,
     figure,
     img
   };
+
 });
 
 
 /* ==================================================
-   AUF ALLE BILDER WARTEN
+   BILDER VORLADEN
    ================================================== */
 
-function waitForImages() {
+function waitForImage(img) {
 
-  return Promise.all(
+  return new Promise(resolve => {
 
-    items.map(item => {
+    if (
+      img.complete &&
+      img.naturalWidth > 0
+    ) {
+      resolve();
 
-      if (
-        item.img.complete &&
-        item.img.naturalWidth > 0
-      ) {
-        return Promise.resolve(item);
-      }
+      return;
+    }
 
-      return new Promise(resolve => {
 
-        item.img.addEventListener(
-          "load",
-          () => resolve(item),
-          { once: true }
-        );
+    img.addEventListener(
+      "load",
+      resolve,
+      { once: true }
+    );
 
-        item.img.addEventListener(
-          "error",
-          () => resolve(item),
-          { once: true }
-        );
 
-      });
+    img.addEventListener(
+      "error",
+      resolve,
+      { once: true }
+    );
 
-    })
-
-  );
+  });
 
 }
 
 
 /* ==================================================
-   MOBILE
+   MASONRY
    ================================================== */
 
-/*
-  Mobile bleibt dein bisheriger Look:
+async function buildPortfolio() {
 
-  Zwei echte Spalten.
-  Das nächste Bild kommt immer
-  in die aktuell kürzere Spalte.
-*/
+  /*
+    Erst die richtige Anzahl Spalten erzeugen.
+  */
 
-function buildMobile() {
-
-  grid.innerHTML = "";
-
-  const columns = [
-    document.createElement("div"),
-    document.createElement("div")
-  ];
-
-  columns.forEach(column => {
-    column.className = "portfolio-column";
-    grid.appendChild(column);
-  });
+  createColumns();
 
 
-  const columnHeights = [0, 0];
+  /*
+    Alle Bilder laden, bevor wir sie verteilen.
+    Dadurch bleibt die Reihenfolge stabil.
+  */
 
-  const gap = 3;
+  await Promise.all(
+    items.map(item =>
+      waitForImage(item.img)
+    )
+  );
 
-  const gridWidth = grid.clientWidth;
 
-  const columnWidth =
-    (gridWidth - gap) / 2;
+  /*
+    Falls während des Ladens die Fensterbreite
+    geändert wurde, Spalten neu bestimmen.
+  */
+
+  createColumns();
 
 
-  items.forEach(item => {
+  const columnHeights =
+    new Array(columns.length).fill(0);
+
+
+  /*
+    Desktop:
+    8453 ist das letzte Bild und wird
+    auf Desktop absichtlich nicht gezeigt.
+
+    Mobile:
+    8453 bleibt drin.
+  */
+
+  const isDesktop =
+    window.innerWidth >= 700;
+
+
+  const visibleItems =
+    isDesktop
+      ? items.filter(item => item.id !== "8453")
+      : items;
+
+
+  /*
+    Jedes Bild kommt immer in
+    die aktuell kürzeste Spalte.
+  */
+
+  visibleItems.forEach(item => {
 
     const ratio =
       item.img.naturalHeight /
       item.img.naturalWidth;
 
+
+    const columnWidth =
+      grid.clientWidth /
+      columns.length;
+
+
     const height =
       columnWidth * ratio;
 
 
-    const shortest =
-      columnHeights[0] <= columnHeights[1]
-        ? 0
-        : 1;
+    let shortest = 0;
+
+
+    for (
+      let i = 1;
+      i < columnHeights.length;
+      i++
+    ) {
+
+      if (
+        columnHeights[i] <
+        columnHeights[shortest]
+      ) {
+        shortest = i;
+      }
+
+    }
 
 
     columns[shortest].appendChild(
@@ -171,245 +258,17 @@ function buildMobile() {
 
 
     columnHeights[shortest] +=
-      height + gap;
-
+      height;
   });
 
 }
 
 
 /* ==================================================
-   DESKTOP
+   START
    ================================================== */
 
-/*
-  Desktop bekommt KEIN normales Grid.
-
-  Stattdessen werden die Bilder zu Reihen
-  zusammengebaut.
-
-  Dadurch können Bilder innerhalb einer Reihe
-  unterschiedlich breit sein – genau wie bei
-  einer hochwertigen Portfolio-Galerie.
-*/
-
-function buildDesktop() {
-
-  grid.innerHTML = "";
-
-  const availableWidth =
-    grid.clientWidth;
-
-  const gap = 5;
-
-  /*
-    Zielhöhe der Reihen.
-
-    Je größer das Fenster,
-    desto größer dürfen die Bilder werden.
-  */
-
-  const targetHeight =
-    Math.max(
-      280,
-      Math.min(
-        430,
-        availableWidth * 0.25
-      )
-    );
-
-
-  let row = [];
-  let aspectSum = 0;
-
-
-  function finishRow(isLastRow = false) {
-
-    if (!row.length) return;
-
-
-    const rowElement =
-      document.createElement("div");
-
-    rowElement.className =
-      "portfolio-row";
-
-
-    /*
-      Breite, die für Bilder verfügbar ist.
-    */
-
-    const totalGap =
-      gap * (row.length - 1);
-
-    const imageWidth =
-      availableWidth - totalGap;
-
-
-    /*
-      Bei einer normalen Reihe:
-      Bilder werden so skaliert,
-      dass sie exakt die Reihe füllen.
-    */
-
-    let rowHeight =
-      imageWidth / aspectSum;
-
-
-    /*
-      Die letzte Reihe soll nicht
-      überproportional riesig werden.
-    */
-
-    if (isLastRow) {
-
-      rowHeight =
-        Math.min(
-          rowHeight,
-          targetHeight
-        );
-
-    }
-
-
-    row.forEach(item => {
-
-      const ratio =
-        item.img.naturalWidth /
-        item.img.naturalHeight;
-
-      const width =
-        rowHeight * ratio;
-
-
-      item.figure.style.width =
-        `${width}px`;
-
-      item.figure.style.height =
-        `${rowHeight}px`;
-
-
-      rowElement.appendChild(
-        item.figure
-      );
-
-    });
-
-
-    grid.appendChild(
-      rowElement
-    );
-
-
-    row = [];
-    aspectSum = 0;
-
-  }
-
-
-  /*
-    Bilder in Reihen sammeln.
-  */
-
-  items.forEach(item => {
-
-    const ratio =
-      item.img.naturalWidth /
-      item.img.naturalHeight;
-
-
-    row.push(item);
-
-    aspectSum += ratio;
-
-
-    const estimatedHeight =
-      imageWidthEstimate(
-        availableWidth,
-        aspectSum,
-        row.length,
-        gap
-      );
-
-
-    /*
-      Sobald die Reihe ungefähr
-      die gewünschte Höhe erreicht,
-      wird sie abgeschlossen.
-    */
-
-    if (
-      estimatedHeight <= targetHeight ||
-      row.length >= 4
-    ) {
-
-      finishRow(false);
-
-    }
-
-  });
-
-
-  /*
-    Restliche Bilder.
-  */
-
-  if (row.length) {
-    finishRow(true);
-  }
-
-
-  function imageWidthEstimate(
-    width,
-    aspectRatioSum,
-    count,
-    gapSize
-  ) {
-
-    const gaps =
-      gapSize * (count - 1);
-
-    return (
-      width - gaps
-    ) / aspectRatioSum;
-
-  }
-
-}
-
-
-/* ==================================================
-   LAYOUT AUSWÄHLEN
-   ================================================== */
-
-function buildPortfolio() {
-
-  if (
-    window.matchMedia(
-      "(min-width: 700px)"
-    ).matches
-  ) {
-
-    buildDesktop();
-
-  } else {
-
-    buildMobile();
-
-  }
-
-}
-
-
-/* ==================================================
-   INITIALISIERUNG
-   ================================================== */
-
-waitForImages().then(() => {
-
-  buildPortfolio();
-
-});
+buildPortfolio();
 
 
 /* ==================================================
@@ -426,7 +285,23 @@ window.addEventListener(
 
     resizeTimer = setTimeout(() => {
 
-      buildPortfolio();
+      /*
+        Nur neu bauen, wenn wirklich
+        zwischen Mobile und Desktop
+        gewechselt wurde.
+      */
+
+      const newCount =
+        getColumnCount();
+
+
+      if (
+        newCount !== currentColumnCount
+      ) {
+
+        buildPortfolio();
+
+      }
 
     }, 150);
 
@@ -435,7 +310,7 @@ window.addEventListener(
 
 
 /* ==================================================
-   FULLSCREEN VIEWER
+   FULLSCREEN SCHLIESSEN
    ================================================== */
 
 close.addEventListener(
