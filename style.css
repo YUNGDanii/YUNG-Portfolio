@@ -14,10 +14,7 @@ body {
   background: #111;
   color: #fff;
 
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 body {
@@ -40,7 +37,6 @@ body {
 
   background: #111;
 }
-
 
 .hero > img {
   display: block;
@@ -69,9 +65,7 @@ body {
   z-index: 5;
 
   display: flex;
-
   flex-direction: column;
-
   align-items: flex-start;
 
   color: #fff;
@@ -82,10 +76,28 @@ body {
 
 
 /* ==================================================
-   EIGENER ACCOUNT
+   YUNG
+   ================================================== */
+
+.hero-title {
+  margin: 0 0 10px;
+
+  font-size: 38px;
+  font-weight: 400;
+
+  line-height: 1;
+
+  letter-spacing: -.03em;
+}
+
+
+/* ==================================================
+   DEIN ACCOUNT
    ================================================== */
 
 .hero-own-link {
+  display: block;
+
   color: #fff;
 
   font-size: 15px;
@@ -98,7 +110,7 @@ body {
 
   opacity: .75;
 
-  margin: 0 0 12px;
+  margin: 0 0 20px;
 }
 
 .hero-own-link:hover {
@@ -107,24 +119,7 @@ body {
 
 
 /* ==================================================
-   TITEL
-   ================================================== */
-
-.hero-title {
-  margin: 0 0 28px;
-
-  font-size: 38px;
-
-  font-weight: 400;
-
-  line-height: 1;
-
-  letter-spacing: -.03em;
-}
-
-
-/* ==================================================
-   FOTOGRAFIE CREDIT
+   SELINNA CREDIT
    ================================================== */
 
 .hero-credit {
@@ -174,7 +169,6 @@ body {
   color: #fff;
 
   font-size: 28px;
-
   font-weight: 300;
 
   line-height: 1;
@@ -211,7 +205,6 @@ body {
   min-width: 0;
 
   display: flex;
-
   flex-direction: column;
 
   gap: 3px;
@@ -238,7 +231,6 @@ body {
 
   line-height: 0;
 }
-
 
 .item img {
   display: block;
@@ -267,16 +259,12 @@ dialog {
 
   border: 0;
 
-  background:
-    rgba(0, 0, 0, .97);
+  background: rgba(0, 0, 0, .97);
 }
-
 
 dialog::backdrop {
-  background:
-    rgba(0, 0, 0, .97);
+  background: rgba(0, 0, 0, .97);
 }
-
 
 dialog img {
   display: block;
@@ -295,11 +283,10 @@ dialog img {
 #close {
   position: fixed;
 
-  top:
-    max(
-      14px,
-      env(safe-area-inset-top)
-    );
+  top: max(
+    14px,
+    env(safe-area-inset-top)
+  );
 
   right: 14px;
 
@@ -311,13 +298,11 @@ dialog img {
   border: 0;
   border-radius: 50%;
 
-  background:
-    rgba(255, 255, 255, .14);
+  background: rgba(255, 255, 255, .14);
 
   color: #fff;
 
   font-size: 25px;
-
   line-height: 1;
 
   cursor: pointer;
@@ -330,105 +315,55 @@ dialog img {
 
 @media (min-width: 700px) {
 
-  /* ----------------------------------------------
-     HERO
-     ---------------------------------------------- */
-
   .hero {
     height: 78vh;
-
     min-height: 600px;
   }
 
-
   .hero > img {
     object-position: 64% center;
-
     transform: scale(1.12);
   }
 
-
-  /* ----------------------------------------------
-     HERO INFORMATION
-     ---------------------------------------------- */
-
   .hero-info {
     left: 50%;
-
     bottom: 21%;
 
     transform: translateX(-50%);
 
     align-items: center;
-
     text-align: center;
 
     white-space: nowrap;
   }
 
-
-  /* ----------------------------------------------
-     EIGENER ACCOUNT
-     ---------------------------------------------- */
+  .hero-title {
+    font-size: 52px;
+    margin-bottom: 10px;
+  }
 
   .hero-own-link {
     font-size: 15px;
-
-    margin-bottom: 12px;
+    margin-bottom: 24px;
   }
-
-
-  /* ----------------------------------------------
-     YUNG
-     ---------------------------------------------- */
-
-  .hero-title {
-    font-size: 52px;
-
-    margin-bottom: 30px;
-
-    letter-spacing: -.035em;
-  }
-
-
-  /* ----------------------------------------------
-     CREDIT
-     ---------------------------------------------- */
 
   .hero-credit {
-    margin-bottom: 8px;
-
     font-size: 16px;
+    margin-bottom: 8px;
   }
-
-
-  /* ----------------------------------------------
-     SELINNA
-     ---------------------------------------------- */
 
   .hero-link {
     font-size: 15px;
   }
 
-
-  /* ----------------------------------------------
-     ARROW
-     ---------------------------------------------- */
-
   .scroll-arrow {
     left: 50%;
-
     bottom: 34px;
 
     transform: translateX(-50%);
 
     font-size: 32px;
   }
-
-
-  /* ----------------------------------------------
-     PORTFOLIO
-     ---------------------------------------------- */
 
   .portfolio {
     grid-template-columns:
@@ -439,16 +374,14 @@ dialog img {
     padding: 0 5px 5px;
   }
 
-
   .portfolio-column {
     gap: 5px;
   }
-
 }
 
 
 /* ==================================================
-   LARGE DESKTOP
+   GROSSE DESKTOPS
    ================================================== */
 
 @media (min-width: 1200px) {
@@ -457,21 +390,21 @@ dialog img {
     bottom: 20%;
   }
 
-
   .hero-title {
     font-size: 56px;
   }
 
+  .hero-own-link {
+    font-size: 16px;
+  }
 
   .hero-credit {
     font-size: 17px;
   }
 
-
   .hero-link {
     font-size: 16px;
   }
-
 }
 
 
@@ -479,64 +412,59 @@ dialog img {
    HANDY QUERFORMAT
    ================================================== */
 
-@media (orientation: landscape) and (min-width: 700px) {
+/*
+   WICHTIG:
+   Diese Regel benutzt NICHT min-width: 700px.
+
+   Dadurch funktioniert das Drehen auch auf
+   kleineren Handys zuverlässig.
+*/
+
+@media (orientation: landscape) {
 
   .hero {
     height: 100vh;
-
     min-height: 0;
   }
 
-
   .hero > img {
     object-position: 64% center;
-
     transform: scale(1.12);
   }
 
-
   .hero-info {
     left: 50%;
-
     bottom: 20%;
 
     transform: translateX(-50%);
 
     align-items: center;
-
     text-align: center;
+
+    white-space: nowrap;
   }
-
-
-  .hero-own-link {
-    font-size: 13px;
-
-    margin-bottom: 9px;
-  }
-
 
   .hero-title {
     font-size: 42px;
-
-    margin-bottom: 22px;
+    margin-bottom: 8px;
   }
 
+  .hero-own-link {
+    font-size: 13px;
+    margin-bottom: 15px;
+  }
 
   .hero-credit {
     font-size: 14px;
-
     margin-bottom: 6px;
   }
-
 
   .hero-link {
     font-size: 13px;
   }
 
-
   .scroll-arrow {
     left: 50%;
-
     bottom: 20px;
 
     transform: translateX(-50%);
@@ -544,4 +472,16 @@ dialog img {
     font-size: 28px;
   }
 
+  .portfolio {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+
+    gap: 5px;
+
+    padding: 0 5px 5px;
+  }
+
+  .portfolio-column {
+    gap: 5px;
+  }
 }
