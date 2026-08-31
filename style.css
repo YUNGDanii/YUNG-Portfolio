@@ -6,7 +6,6 @@
   box-sizing: border-box;
 }
 
-
 html,
 body {
   margin: 0;
@@ -21,7 +20,6 @@ body {
     Helvetica,
     sans-serif;
 }
-
 
 body {
   overflow-x: hidden;
@@ -161,11 +159,12 @@ body {
 /*
   KEIN NORMALES GRID.
 
-  Zwei echte Spalten.
-  Das JavaScript entscheidet,
-  in welche Spalte das nächste Bild kommt.
+  Die Spalten werden durch JavaScript erzeugt.
+  Auf Mobile gibt es 2 Spalten.
+  Auf Desktop gibt es 3 Spalten.
 
-  Dadurch entsteht der versetzte Look.
+  Das JavaScript verteilt die Bilder
+  anhand ihrer tatsächlichen Höhe.
 */
 
 .portfolio {
@@ -320,48 +319,87 @@ dialog img {
 
 @media (min-width: 700px) {
 
+  /* =========================
+     DESKTOP HERO
+     ========================= */
+
   .hero {
     height: 78vh;
+
+    min-height: 600px;
   }
 
 
   .hero > img {
     object-position: 62% center;
 
-    transform: scale(1.25);
+    transform: scale(1.15);
   }
 
 
+  /*
+    Desktop:
+    Der komplette Info-Block sitzt
+    mittig im Hero.
+  */
+
   .hero-info {
-    left: 28px;
+    left: 50%;
 
     bottom: 105px;
+
+    transform: translateX(-50%);
+
+    align-items: center;
+
+    text-align: center;
+
+    white-space: nowrap;
   }
 
 
   .hero-title {
-    font-size: 40px;
-
     margin-bottom: 28px;
+
+    font-size: 46px;
   }
 
 
-  .hero-credit,
+  .hero-credit {
+    margin-bottom: 8px;
+
+    font-size: 16px;
+  }
+
+
   .hero-link {
-    font-size: 14px;
+    font-size: 15px;
   }
 
+
+  /* =========================
+     DESKTOP ARROW
+     ========================= */
 
   .scroll-arrow {
-    left: 28px;
+    left: 50%;
 
-    bottom: 34px;
+    bottom: 30px;
 
-    font-size: 32px;
+    transform: translateX(-50%);
+
+    font-size: 34px;
   }
 
 
+  /* =========================
+     DESKTOP PORTFOLIO
+     ========================= */
+
   .portfolio {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+
     gap: 5px;
 
     padding: 0 5px 5px;
