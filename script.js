@@ -1,3 +1,7 @@
+/* ==================================================
+   BILDREIHENFOLGE
+   ================================================== */
+
 const order = [
   "8455","8467",
   "8442",
@@ -23,30 +27,46 @@ const order = [
   "8453"
 ];
 
+
+/* ==================================================
+   ELEMENTE
+   ================================================== */
+
 const grid = document.getElementById("portfolio");
+
 const viewer = document.getElementById("viewer");
 const viewerImage = document.getElementById("viewer-image");
 const close = document.getElementById("close");
 
-const columns = [
-  document.createElement("div"),
-  document.createElement("div")
-];
 
-columns.forEach(column => {
-  column.className = "portfolio-column";
-  grid.appendChild(column);
-});
+/* ==================================================
+   RESPONSIVE SPALTEN
+   ================================================== */
+
+function getColumnCount() {
+
+  /*
+    Mobile:
+    2 Spalten
+
+    Desktop:
+    3 Spalten
+  */
+
+  return window.innerWidth >= 700 ? 3 : 2;
+}
 
 
 /* ==================================================
-   BILDER VORBEREITEN
+   BILDER ERSTELLEN
    ================================================== */
 
 const items = order.map((id, index) => {
 
   const figure = document.createElement("figure");
+
   figure.className = "item";
+
 
   const img = document.createElement("img");
 
@@ -54,22 +74,28 @@ const items = order.map((id, index) => {
 
   img.alt = `YUNG portfolio image ${index + 1}`;
 
+  img.loading = "eager";
+
   img.decoding = "async";
 
-  /*
-    Wichtig:
-    Keine Lazy-Loads während des initialen
-    Masonry-Aufbaus.
-  */
-  img.loading = "eager";
 
   figure.appendChild(img);
 
+
+  /* =========================
+     FULLSCREEN
+     ========================= */
+
   figure.addEventListener("click", () => {
+
     viewerImage.src = img.src;
+
     viewerImage.alt = img.alt;
+
     viewer.showModal();
+
   });
+
 
   return {
     id,
@@ -77,29 +103,53 @@ const items = order.map((id, index) => {
     img,
     index
   };
+
 });
 
 
 /* ==================================================
-   ALLE BILDER LADEN
+   AUF BILDER WARTEN
    ================================================== */
 
 const imagePromises = items.map(item => {
 
   return new Promise(resolve => {
 
-    if (item.img.complete && item.img.naturalWidth > 0) {
+    /*
+      Bild ist bereits vollständig geladen.
+    */
+
+    if (
+      item.img.complete &&
+      item.img.naturalWidth > 0
+    ) {
       resolve(item);
       return;
     }
 
-    item.img.addEventListener("load", () => {
-      resolve(item);
-    }, { once: true });
 
-    item.img.addEventListener("error", () => {
-      resolve(item);
-    }, { once: true });
+    /*
+      Normaler Load.
+    */
+
+    item.img.addEventListener(
+      "load",
+      () => resolve(item),
+      { once: true }
+    );
+
+
+    /*
+      Auch bei einem Fehler weiterbauen,
+      damit nicht das komplette Portfolio
+      hängen bleibt.
+    */
+
+    item.img.addEventListener(
+      "error",
+      () => resolve(item),
+      { once: true }
+    );
 
   });
 
@@ -107,45 +157,202 @@ const imagePromises = items.map(item => {
 
 
 /* ==================================================
-   MASONRY AUFBAUEN
+   MASONRY AUFBAU
    ================================================== */
 
-Promise.all(imagePromises).then(loadedItems => {
+function buildMasonry(loadedItems) {
 
-  const columnHeights = [0, 0];
+  /*
+    Aktuelle Anzahl Spalten bestimmen.
+  */
+
+  const columnCount = getColumnCount();
+
+
+  /*
+    Alten Aufbau komplett entfernen.
+    Dadurch entstehen beim Wechsel
+    zwischen Mobile/Desktop keine
+    doppelten Bilder.
+  */
+
+  grid.innerHTML = "";
+
+
+  /*
+    Neue Spalten erzeugen.
+  */
+
+  const columns = [];
+
+  for (let i = 0; i < columnCount; i++) {
+
+    const column = document.createElement("div");
+
+    column.className = "portfolio-column";
+
+    columns.push(column);
+
+    grid.appendChild(column);
+
+  }
+
+
+  /*
+    Höhe jeder Spalte merken.
+  */
+
+  const columnHeights =
+    new Array(columnCount).fill(0);
+
+
+  /*
+    Abstände aus CSS.
+
+    Mobile = 3px
+    Desktop = 5px
+  */
+
+  const gap =
+    window.innerWidth >= 700
+      ? 5
+      : 3;
+
+
+  /*
+    Tatsächliche Breite des Portfolios.
+  */
 
   const gridWidth = grid.clientWidth;
 
-  const columnWidth =
-    (gridWidth - 3) / 2;
 
+  /*
+    Gesamtbreite der Zwischenräume.
+  */
+
+  const totalGaps =
+    gap * (columnCount - 1);
+
+
+  /*
+    Breite eines einzelnen Bildes.
+  */
+
+  const columnWidth =
+    (gridWidth - totalGaps) / columnCount;
+
+
+  /* ==================================================
+     BILDER VERTEILEN
+     ================================================== */
 
   loadedItems.forEach(item => {
+
+    /*
+      Falls ein Bild nicht geladen werden konnte,
+      überspringen wir die Höhenberechnung.
+    */
+
+    if (
+      !item.img.naturalWidth ||
+      !item.img.naturalHeight
+    ) {
+      return;
+    }
+
+
+    /*
+      Seitenverhältnis des Originalbildes.
+    */
 
     const ratio =
       item.img.naturalHeight /
       item.img.naturalWidth;
+
+
+    /*
+      Tatsächliche Höhe in der jeweiligen Spalte.
+    */
 
     const height =
       columnWidth * ratio;
 
 
     /*
-      Immer die aktuell kürzere
-      Spalte nehmen.
+      Kürzeste Spalte suchen.
     */
 
-    const shortest =
-      columnHeights[0] <= columnHeights[1]
-        ? 0
-        : 1;
+    let shortest = 0;
+
+    for (let i = 1; i < columnCount; i++) {
+
+      if (
+        columnHeights[i] <
+        columnHeights[shortest]
+      ) {
+        shortest = i;
+      }
+
+    }
 
 
-    columns[shortest].appendChild(item.figure);
+    /*
+      Bild in die kürzeste Spalte setzen.
+    */
 
-    columnHeights[shortest] += height + 3;
+    columns[shortest].appendChild(
+      item.figure
+    );
+
+
+    /*
+      Höhe inklusive Abstand merken.
+    */
+
+    columnHeights[shortest] +=
+      height + gap;
 
   });
+
+}
+
+
+/* ==================================================
+   INITIALER AUFBAU
+   ================================================== */
+
+Promise.all(imagePromises).then(loadedItems => {
+
+  buildMasonry(loadedItems);
+
+});
+
+
+/* ==================================================
+   RESIZE
+   ==================================================
+
+   Wenn man beispielsweise das Browserfenster
+   von Desktop auf Mobile zieht oder umgekehrt,
+   wird das Masonry neu berechnet.
+*/
+
+let resizeTimer = null;
+
+window.addEventListener("resize", () => {
+
+  clearTimeout(resizeTimer);
+
+  resizeTimer = setTimeout(() => {
+
+    /*
+      Nur neu aufbauen, wenn die Bilder
+      bereits geladen sind.
+    */
+
+    buildMasonry(items);
+
+  }, 150);
 
 });
 
@@ -155,14 +362,18 @@ Promise.all(imagePromises).then(loadedItems => {
    ================================================== */
 
 close.addEventListener("click", () => {
+
   viewer.close();
+
 });
 
 
 viewer.addEventListener("click", event => {
 
   if (event.target === viewer) {
+
     viewer.close();
+
   }
 
 });
