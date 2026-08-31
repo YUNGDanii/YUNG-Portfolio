@@ -1,43 +1,37 @@
-const images = [
-  "8455","8467","8442","8474","8470","8444","8458","8471","8446","8461",
-  "8443","8457","8469","8464","8459","8473","8463","8476","8449","8460",
-  "8448","8450","8475","8451","8462","8472","8477","8465",
-  "8452","8466","8441","8445","8447","8456","8468","8454",
-  "8453","8478"
+const order = [
+  "8455","8467","8442","8456","8470","8444","8446","8458","8461",
+  "8448","8472","8475","8465","8462","8451","8477","8452","8466",
+  "8441","8454","8443","8468","8457","8469","8445","8459","8473",
+  "8447","8476","8474","8449","8463","8460","8450","8464","8478","8453"
 ];
 
-const grid = document.getElementById("grid");
+const fullWidthPositions = new Set([2, 5, 8, 17, 19, 36, 37]);
+const grid = document.getElementById("portfolio");
 const viewer = document.getElementById("viewer");
-const viewerImage = document.getElementById("viewerImage");
-const close = document.querySelector(".close");
+const viewerImage = document.getElementById("viewer-image");
+const close = document.getElementById("close");
 
-images.forEach((id) => {
+order.forEach((id, index) => {
   const figure = document.createElement("figure");
-  figure.className = "item";
+  figure.className = "item" + (fullWidthPositions.has(index) ? " full" : "");
 
   const img = document.createElement("img");
   img.src = `images/${id}.jpeg`;
-  img.alt = `YUNG portfolio image ${id}`;
-  img.loading = "lazy";
+  img.alt = `YUNG portfolio image ${index + 1}`;
+  img.loading = index < 4 ? "eager" : "lazy";
   img.decoding = "async";
 
-  img.addEventListener("load", () => {
-    if (img.naturalWidth >= img.naturalHeight) {
-      figure.classList.add("landscape");
-    }
-  });
+  figure.appendChild(img);
+  grid.appendChild(figure);
 
   figure.addEventListener("click", () => {
     viewerImage.src = img.src;
     viewerImage.alt = img.alt;
     viewer.showModal();
   });
-
-  figure.appendChild(img);
-  grid.appendChild(figure);
 });
 
 close.addEventListener("click", () => viewer.close());
-viewer.addEventListener("click", (event) => {
-  if (event.target === viewer) viewer.close();
+viewer.addEventListener("click", e => {
+  if (e.target === viewer) viewer.close();
 });
