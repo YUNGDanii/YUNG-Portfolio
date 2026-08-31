@@ -4,7 +4,6 @@ const order = [
   "8441","8454","8443","8468","8457","8469","8445","8459","8473",
   "8447","8476","8474","8449","8463","8460","8450","8464","8478","8453"
 ];
-
 const grid = document.getElementById("portfolio");
 const viewer = document.getElementById("viewer");
 const viewerImage = document.getElementById("viewer-image");
