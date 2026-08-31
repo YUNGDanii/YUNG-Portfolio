@@ -33,9 +33,10 @@ body {
   height: 100%;
   display: block;
   object-fit: cover;
-  object-position: 85% center;
+  object-position: 58% center;
   transform: scale(1.25) !important;
 }
+
 
 /* =========================
    CREDIT
@@ -47,9 +48,11 @@ body {
   justify-content: space-between;
   align-items: baseline;
   gap: 12px;
+
   font-size: 10px;
   line-height: 1.3;
   letter-spacing: .02em;
+
   background: #111;
 }
 
@@ -63,13 +66,15 @@ body {
   opacity: .55;
 }
 
+
 /* =========================
-   PORTFOLIO
+   PORTFOLIO GRID
    ========================= */
 
 .portfolio-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+
   gap: 3px;
   padding: 0 3px 3px;
 }
@@ -78,8 +83,10 @@ body {
   display: block;
   margin: 0;
   padding: 0;
+
   overflow: hidden;
   background: #191919;
+
   cursor: zoom-in;
 }
 
@@ -93,6 +100,7 @@ body {
   height: auto;
 }
 
+
 /* =========================
    FULLSCREEN VIEWER
    ========================= */
@@ -100,11 +108,15 @@ body {
 dialog {
   width: 100vw;
   max-width: 100vw;
+
   height: 100vh;
   max-height: 100vh;
+
   margin: 0;
   padding: 0;
+
   border: 0;
+
   background: rgba(0, 0, 0, .96);
 }
 
@@ -118,20 +130,35 @@ dialog img {
   object-fit: contain;
 }
 
+
+/* =========================
+   CLOSE BUTTON
+   ========================= */
+
 #close {
   position: fixed;
+
   top: max(14px, env(safe-area-inset-top));
   right: 14px;
+
   z-index: 10;
+
   width: 38px;
   height: 38px;
+
   border: 0;
   border-radius: 50%;
+
   background: rgba(255, 255, 255, .14);
+
   color: #fff;
+
   font-size: 25px;
   line-height: 1;
+
+  cursor: pointer;
 }
+
 
 /* =========================
    DESKTOP
@@ -145,7 +172,7 @@ dialog img {
 
   .hero img {
     transform: scale(1.25) !important;
-    object-position: 62% center;
+    object-position: 58% center;
   }
 
   .credit {
