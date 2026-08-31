@@ -19,8 +19,7 @@ const order = [
   "8449","8463",
   "8460","8450",
   "8464",
-  "8478",
-  "8453"
+  "8478"
 ];
 
 
@@ -31,17 +30,11 @@ const close = document.getElementById("close");
 
 
 /* ==================================================
-   ANZAHL SPALTEN
+   SPALTEN
    ================================================== */
 
 const isDesktop = window.innerWidth >= 700;
-
 const columnCount = isDesktop ? 3 : 2;
-
-
-/* ==================================================
-   SPALTEN ERSTELLEN
-   ================================================== */
 
 const columns = [];
 
@@ -58,58 +51,56 @@ for (let i = 0; i < columnCount; i++) {
 
 
 /* ==================================================
-   BILDER VORBEREITEN
+   BILDER
    ================================================== */
 
-const items = order
-  .filter(id => !(isDesktop && id === "8453"))
-  .map((id, index) => {
+const items = order.map((id, index) => {
 
-    const figure = document.createElement("figure");
+  const figure = document.createElement("figure");
 
-    figure.className = "item";
+  figure.className = "item";
 
 
-    const img = document.createElement("img");
+  const img = document.createElement("img");
 
-    img.src = `images/${id}.jpeg`;
+  img.src = `images/${id}.jpeg`;
 
-    img.alt = `YUNG portfolio image ${index + 1}`;
+  img.alt = `YUNG portfolio image ${index + 1}`;
 
-    img.loading = "eager";
+  img.loading = "eager";
 
-    img.decoding = "async";
-
-
-    figure.appendChild(img);
+  img.decoding = "async";
 
 
-    /* ================================================
-       FULLSCREEN VIEWER
-       ================================================ */
-
-    figure.addEventListener("click", () => {
-
-      viewerImage.src = img.src;
-
-      viewerImage.alt = img.alt;
-
-      viewer.showModal();
-
-    });
+  figure.appendChild(img);
 
 
-    return {
-      id,
-      figure,
-      img
-    };
+  /* ==================================================
+     FULLSCREEN
+     ================================================== */
+
+  figure.addEventListener("click", () => {
+
+    viewerImage.src = img.src;
+
+    viewerImage.alt = img.alt;
+
+    viewer.showModal();
 
   });
 
 
+  return {
+    id,
+    figure,
+    img
+  };
+
+});
+
+
 /* ==================================================
-   BILDER LADEN
+   AUF BILDER WARTEN
    ================================================== */
 
 function waitForImage(img) {
@@ -145,17 +136,10 @@ function waitForImage(img) {
 
 
 /* ==================================================
-   PORTFOLIO AUFBAU
+   MASONRY
    ================================================== */
 
 async function buildPortfolio() {
-
-  /*
-    WICHTIG:
-
-    Wir bauen das Portfolio genau EINMAL.
-    Kein Neuaufbau beim Scrollen.
-  */
 
   await Promise.all(
     items.map(item =>
@@ -168,44 +152,37 @@ async function buildPortfolio() {
     new Array(columnCount).fill(0);
 
 
-  /*
-    Tatsächliche Breite einer Spalte.
-  */
+  const gap =
+    isDesktop ? 5 : 3;
 
-  const gap = isDesktop ? 5 : 3;
 
   const totalGap =
     gap * (columnCount - 1);
+
 
   const columnWidth =
     (grid.clientWidth - totalGap) /
     columnCount;
 
 
-  /* ==================================================
-     MASONRY VERTEILUNG
-     ================================================== */
-
   items.forEach(item => {
 
-    const width =
-      item.img.naturalWidth;
-
-    const height =
-      item.img.naturalHeight;
+    if (
+      !item.img.naturalWidth ||
+      !item.img.naturalHeight
+    ) {
+      return;
+    }
 
 
     const ratio =
-      height / width;
+      item.img.naturalHeight /
+      item.img.naturalWidth;
 
 
-    const renderedHeight =
+    const height =
       columnWidth * ratio;
 
-
-    /*
-      Kürzeste Spalte finden.
-    */
 
     let shortest = 0;
 
@@ -220,9 +197,7 @@ async function buildPortfolio() {
         columnHeights[i] <
         columnHeights[shortest]
       ) {
-
         shortest = i;
-
       }
 
     }
@@ -234,7 +209,7 @@ async function buildPortfolio() {
 
 
     columnHeights[shortest] +=
-      renderedHeight + gap;
+      height + gap;
 
   });
 
@@ -249,7 +224,7 @@ buildPortfolio();
 
 
 /* ==================================================
-   FULLSCREEN VIEWER
+   FULLSCREEN
    ================================================== */
 
 close.addEventListener("click", () => {
